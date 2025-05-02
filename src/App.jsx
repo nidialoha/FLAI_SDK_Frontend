@@ -2,14 +2,32 @@ import React from "react";
 import LoginButton from "./Login";
 import LogoutButton from "./Logout";
 import Profile from "./Profile";
+import NavBar from "./Components/NavBar";
+import NavBarRechts from "./Components/NavBarRechts";
+import MainLayout from "./Layout/MainLayout";
+import Blogs from "./Pages/Blogs";
+import Forum from "./Pages/Forum";
+import { Route, Routes } from "react-router";
+import Dashboard from "./Pages/Dashboard";
+import MeineBlogs from "./Pages/MeineBlogs";
+import DetailBlog from "./Pages/DetailBlog";
+import DetailForum from "./Pages/DetailForum";
 
 function App() {
   return (
-    <div>
-      <LoginButton />
-      <LogoutButton />
-      <Profile />
-    </div>
+    <>
+      <Routes>
+        <Route element={<MainLayout />}>
+          <Route path="/" element={<Forum />} />
+          <Route path="/forum" element={<Forum />} />
+          <Route path="/blog" element={<Blogs />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/meineblogs" element={<MeineBlogs />} />
+          <Route path="/detailblog" element={<DetailBlog />} />
+          <Route path="/detailforum" element={<DetailForum />} />
+        </Route>
+      </Routes>
+    </>
   );
 }
 
