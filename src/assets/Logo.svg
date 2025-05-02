@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Ebene_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" viewBox="0 0 336.91 92.83">
+  <!-- Generator: Adobe Illustrator 29.5.0, SVG Export Plug-In . SVG Version: 2.1.0 Build 137)  -->
+  <defs>
+    <style>
+      .st0 {
+        fill: url(#Unbenannter_Verlauf_161);
+      }
+
+      .st1 {
+        fill: url(#Unbenannter_Verlauf_164);
+      }
+
+      .st2 {
+        fill: url(#Unbenannter_Verlauf_163);
+      }
+
+      .st3 {
+        fill: url(#Unbenannter_Verlauf_166);
+      }
+
+      .st4 {
+        fill: url(#Unbenannter_Verlauf_165);
+      }
+
+      .st5 {
+        fill: url(#Unbenannter_Verlauf_167);
+      }
+
+      .st6 {
+        fill: url(#Unbenannter_Verlauf_162);
+      }
+
+      .st7 {
+        fill: url(#Unbenannter_Verlauf_16);
+      }
+    </style>
+    <linearGradient id="Unbenannter_Verlauf_16" data-name="Unbenannter Verlauf 16" x1="19.56" y1="63.55" x2="308.57" y2="34.79" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#37348b"/>
+      <stop offset=".06" stop-color="#443a8e"/>
+      <stop offset=".24" stop-color="#664997"/>
+      <stop offset=".42" stop-color="#80569e"/>
+      <stop offset=".61" stop-color="#935fa3"/>
+      <stop offset=".8" stop-color="#9f64a6"/>
+      <stop offset="1" stop-color="#a366a7"/>
+    </linearGradient>
+    <linearGradient id="Unbenannter_Verlauf_161" data-name="Unbenannter Verlauf 16" x1="19.87" y1="66.71" x2="308.88" y2="37.95" xlink:href="#Unbenannter_Verlauf_16"/>
+    <linearGradient id="Unbenannter_Verlauf_162" data-name="Unbenannter Verlauf 16" x1="20.38" y1="71.86" x2="309.4" y2="43.1" xlink:href="#Unbenannter_Verlauf_16"/>
+    <linearGradient id="Unbenannter_Verlauf_163" data-name="Unbenannter Verlauf 16" x1="18.39" y1="51.84" x2="307.4" y2="23.08" xlink:href="#Unbenannter_Verlauf_16"/>
+    <linearGradient id="Unbenannter_Verlauf_164" data-name="Unbenannter Verlauf 16" x1="18.86" y1="56.53" x2="307.87" y2="27.77" xlink:href="#Unbenannter_Verlauf_16"/>
+    <linearGradient id="Unbenannter_Verlauf_165" data-name="Unbenannter Verlauf 16" x1="19.3" y1="60.97" x2="308.31" y2="32.21" xlink:href="#Unbenannter_Verlauf_16"/>
+    <linearGradient id="Unbenannter_Verlauf_166" data-name="Unbenannter Verlauf 16" x1="19.18" y1="59.8" x2="308.2" y2="31.04" xlink:href="#Unbenannter_Verlauf_16"/>
+    <linearGradient id="Unbenannter_Verlauf_167" data-name="Unbenannter Verlauf 16" x1="19.89" y1="66.92" x2="308.9" y2="38.16" xlink:href="#Unbenannter_Verlauf_16"/>
+  </defs>
+  <path class="st7" d="M199.94,46.29c-1.72-.76-3.99-1.52-6.81-2.3-2.33-.65-4.14-1.24-5.43-1.75-1.29-.51-2.37-1.26-3.25-2.24-.88-.98-1.32-2.25-1.32-3.8,0-2.17.74-3.85,2.21-5.06,1.47-1.21,3.37-1.81,5.7-1.81,2.49,0,4.5.62,6.01,1.87,1.51,1.25,2.37,2.69,2.58,4.32h6.13c-.33-3.31-1.77-5.97-4.32-7.97-2.56-2-5.84-3-9.84-3-2.78,0-5.24.49-7.39,1.47-2.15.98-3.81,2.37-5,4.17-1.19,1.8-1.78,3.86-1.78,6.2,0,2.66.6,4.77,1.81,6.35,1.21,1.57,2.66,2.73,4.35,3.46,1.7.74,3.96,1.47,6.78,2.21,2.29.61,4.11,1.19,5.46,1.72,1.35.53,2.47,1.31,3.37,2.33.9,1.02,1.35,2.35,1.35,3.99,0,2.08-.77,3.79-2.3,5.12-1.53,1.33-3.63,1.99-6.29,1.99s-4.9-.68-6.35-2.05c-1.45-1.37-2.28-3.06-2.48-5.06h-5.95c.04,2.33.69,4.38,1.96,6.16,1.27,1.78,3.02,3.17,5.24,4.17,2.23,1,4.75,1.5,7.58,1.5s5.5-.57,7.67-1.72c2.17-1.14,3.8-2.64,4.91-4.48s1.66-3.8,1.66-5.89c0-2.7-.61-4.83-1.84-6.41s-2.7-2.74-4.42-3.5Z"/>
+  <path class="st0" d="M248.91,35.16c-1.82-3.23-4.44-5.71-7.85-7.45-3.41-1.74-7.45-2.61-12.11-2.61h-13.31v42.75h13.31c4.66,0,8.7-.85,12.11-2.55,3.41-1.7,6.03-4.15,7.85-7.36,1.82-3.21,2.73-7,2.73-11.38s-.91-8.18-2.73-11.41ZM241.58,58.87c-2.9,2.92-7.12,4.39-12.64,4.39h-7.73V29.64h7.73c5.48,0,9.68,1.49,12.6,4.48,2.92,2.99,4.39,7.14,4.39,12.45s-1.45,9.38-4.35,12.3Z"/>
+  <polygon class="st6" points="271.15 46.51 290.53 25.1 283.47 25.1 265.81 44.91 265.81 25.1 260.23 25.1 260.23 67.85 265.81 67.85 265.81 48.35 283.41 67.85 290.71 67.85 271.15 46.51"/>
+  <g>
+    <polygon class="st2" points="80.42 25.01 77.75 25.01 71.83 25.01 41.31 25.01 41.31 67.82 49.9 67.82 49.9 49.73 63.58 49.73 63.58 42.92 49.9 42.92 49.9 31.94 71.83 31.94 71.83 67.82 104.52 67.82 104.52 61.01 80.42 61.01 80.42 25.01"/>
+    <polygon class="st1" points="129.93 37.77 134.41 26.18 133.97 24.95 123.97 24.95 108.57 67.82 117.59 67.82 120.41 59.66 122.74 52.79 122.79 52.79 123.16 51.59 128.94 34.88 129.93 37.77"/>
+    <polygon class="st4" points="131.37 41.94 140.28 67.82 149.36 67.82 135.63 29.59 131.37 41.94"/>
+    <rect class="st3" x="149.36" y="25.01" width="8.59" height="42.81"/>
+    <path class="st5" d="M128.97,52.79c-1.8,0-3.27,1.46-3.27,3.27s1.46,3.27,3.27,3.27,3.27-1.46,3.27-3.27-1.46-3.27-3.27-3.27Z"/>
+  </g>
+</svg>
