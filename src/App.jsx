@@ -7,6 +7,7 @@ import Dashboard from "./Pages/Dashboard";
 import MeineBlogs from "./Pages/MeineBlogs";
 import DetailBlog from "./Pages/DetailBlog";
 import DetailForum from "./Pages/DetailForum";
+import AdminDashboard from "./Pages/AdminDashboard";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
           <Route path="/meineblogs" element={<MeineBlogs />} />
           <Route path="/detailblog" element={<DetailBlog />} />
           <Route path="/detailforum" element={<DetailForum />} />
+          <Route path="/admindashboard" element={<AdminDashboard />} />
         </Route>
       </Routes>
     </>
