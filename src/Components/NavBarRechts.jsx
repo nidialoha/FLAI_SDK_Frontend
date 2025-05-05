@@ -27,17 +27,30 @@ function NavBarRechts() {
             <div className="flex gap-3 items-center mt-2">
               {isOnDashboard ? (
                 <>
-                  <button
-                    className="text-white text-xs underline cursor-pointer"
-                    onClick={() =>
-                      logout({
-                        logoutParams: { returnTo: window.location.origin },
-                      })
-                    }
-                  >
-                    Logout
-                  </button>
-                  <FaArrowRight className="text-white" />
+                  <div className="flex flex-col gap-3">
+                    <div className="flex gap-3">
+                      <button
+                        className=" text-white text-xs underline cursor-pointer"
+                        onClick={() =>
+                          logout({
+                            logoutParams: { returnTo: window.location.origin },
+                          })
+                        }
+                      >
+                        Logout
+                      </button>
+                      <FaArrowRight className="text-white" />
+                    </div>
+                    <div className="flex gap-3">
+                      <NavLink
+                        to="/admindashboard"
+                        className="text-white text-xs underline cursor-pointer"
+                      >
+                        Admin
+                      </NavLink>
+                      <FaArrowRight className="text-white" />
+                    </div>
+                  </div>
                 </>
               ) : (
                 <>

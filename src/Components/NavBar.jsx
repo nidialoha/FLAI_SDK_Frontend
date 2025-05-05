@@ -51,13 +51,13 @@ function NavBar() {
                     onClick={() => setOpen(false)}
                   />
                 </div>
-                <div className="grid grid-cols-7 gap-6">
+                <div className="grid grid-cols-7 gap-6 items-center">
                   <div className="bg-slate-100 rounded-full h-10 w-10"></div>
                   <p className="col-span-3 ">Lorem ipsum dolor sit ...</p>
                   <p className="col-span-2">vor 3 Min.</p>
                   <FaTrashAlt className="hover:text-red-500" />
                 </div>
-                <div className="grid grid-cols-7 gap-6">
+                <div className="grid grid-cols-7 gap-6 items-center">
                   <div className="bg-slate-100 rounded-full h-10 w-10"></div>
                   <p className="col-span-3">
                     sit amet consectetur adipisicing....
@@ -65,7 +65,7 @@ function NavBar() {
                   <p className="col-span-2">vor 10 Min.</p>
                   <FaTrashAlt className="hover:text-red-500" />
                 </div>
-                <div className="grid grid-cols-7 gap-6">
+                <div className="grid grid-cols-7 gap-6 items-center">
                   <div className="bg-slate-100 rounded-full h-10 w-10"></div>
                   <p className="col-span-3 ">Notification</p>
                   <p className="col-span-2">vor 30 Min.</p>
