@@ -10,7 +10,7 @@ function DetailBlog() {
   return (
     <>
       {/* Filter Bereich & Button Fragen erstellen*/}
-      <div className="flex justify-end mr-5">
+      <div className="flex justify-end">
         <div className="flex gap-8 items-center pt-4">
           <button className="flex">
             <p>Filter</p>
