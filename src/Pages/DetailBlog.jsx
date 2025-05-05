@@ -9,6 +9,7 @@ import { TfiControlRecord } from "react-icons/tfi";
 function DetailBlog() {
   return (
     <>
+      {/* Filter Bereich & Button Fragen erstellen*/}
       <div className="flex justify-end mr-5">
         <div className="flex gap-8 items-center pt-4">
           <button className="flex">
@@ -24,7 +25,9 @@ function DetailBlog() {
         </div>
       </div>
 
-      <div className="bg-white shadow-lg rounded-lg ml-5 mt-5">
+      {/* Karte */}
+
+      <div className="bg-white rounded-lg ml-5 mt-5">
         <div className="flex justify-between items-baseline">
           <h6 className="pt-3 pb-4 ml-5 font-bold">
             Wie Tailwind funktinoiert
@@ -82,12 +85,66 @@ function DetailBlog() {
           </div>
         </div>
       </div>
-      <h2 className="font-bold ml-5">Antwort geben</h2>
+      <h2 className="font-bold ml-5 mb-4">Kommentieren</h2>
 
+      {/* Ersetzen durch Quill von Yannis */}
+      <div className="bg-white ml-5 pt-3 rounded-lg">
+        <p className="ml-5 py-4 h-[150px]">Text block Quill von Yannis</p>
+      </div>
+
+      {/* Kommentare Section */}
       <div>
-        <p className="ml-5 mt-3 pb-4">
-          vor 2 Std. hast du "TITEL von BLOG" kommentiert
-        </p>
+        <h2 className="font-bold ml-5 mt-4">Kommentare</h2>
+      </div>
+      <div className="border-b-1 mt-2 ml-5"></div>
+      <div>
+        <div className="flex justify-between">
+          <div className="flex gap-6 pb-5 pt-5 ">
+            <p className="bg-slate-200 rounded-full ml-5 w-14 h-14"></p>
+            <div>
+              <h6 className="font-bold text-sm">Name Nutzer</h6>
+
+              <div className="flex gap-2 text-right mt-1 items-center">
+                <TfiControlRecord className="text-yellow-500" />
+                <p>12</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex gap-6 pb-5 pt-5">
+            <div className="flex flex-col items-center">
+              <div className="flex gap-3">
+                <AiOutlineLike />
+                <p>4</p>
+              </div>
+            </div>
+
+            <div className="flex flex-col items-center">
+              <div className="flex gap-3">
+                <AiOutlineDislike />
+                <p>4</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="border-b-1 ml-5"></div>
+
+        {/* Inhalt Kommentare */}
+        <div>
+          <h6 className="font-bold text-xs ml-5 mt-5">Titel von Kommentar</h6>
+          <p className="ml-5 text-xs mt-3">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
+            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+            aliquip ex ea commodo consequat. Duis aute irure dolor in
+            reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+            pariatur.
+          </p>
+          <button className="underline text-xs italic ml-5">
+            Kommentieren
+          </button>
+        </div>
       </div>
     </>
   );
