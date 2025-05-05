@@ -27,7 +27,7 @@ function Forum() {
         <div className="mt-4 shadow-md p-6 ml-5 rounded-xl bg-white">
           <div className="flex gap-10 ">
             <div className="flex flex-col items-center">
-              <p className="bg-slate-400 p-6 text-center rounded-full">Img</p>
+              <p className="bg-slate-400 p-6 text-center rounded-full h-14 w-14"></p>
               <div className="flex gap-2 text-right mt-3 items-center">
                 <AiOutlineLike />
                 <p>4</p>
@@ -60,6 +60,16 @@ function Forum() {
           </div>
         </div>
       </NavLink>
+
+      <div className="flex justify-center items-end mt-60 mb-10">
+        <div className="join">
+          <button className="join-item btn">1</button>
+          <button className="join-item btn">2</button>
+          <button className="join-item btn btn-disabled">...</button>
+          <button className="join-item btn">99</button>
+          <button className="join-item btn">100</button>
+        </div>
+      </div>
     </>
   );
 }
