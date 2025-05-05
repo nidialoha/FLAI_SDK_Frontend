@@ -8,10 +8,10 @@ import { NavLink } from "react-router";
 function Blogs() {
   return (
     <>
-      <div className="flex justify-between items-cente ml-5 mt-5">
+      <div className="flex justify-between items-center ml-5 mt-5">
         <h1 className="font-black">Blogs</h1>
         <div className="flex gap-8 items-center">
-          <button className="flex">
+          <button className="flex cursor-pointer">
             <p>Filter</p>
             <CiFilter className="text-xl" />
           </button>
