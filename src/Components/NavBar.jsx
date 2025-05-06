@@ -11,7 +11,7 @@ function NavBar() {
   return (
     <>
       <div className="flex justify-between pt-4">
-        <img src="./src/assets/Logo.svg" alt="logo" className="w-1/7" />
+        <img src="Logo.svg" alt="logo" className="w-1/7" />
         <label className="input">
           <svg
             className="h-[1em] opacity-50"
@@ -36,7 +36,7 @@ function NavBar() {
           <NavLink to="/blog">Blog</NavLink>
           <button onClick={() => setOpen(true)}>
             <img
-              src="./src/assets/392523_bell_notification_remind_reminder_ring_icon.svg"
+              src="392523_bell_notification_remind_reminder_ring_icon.svg"
               alt="notification"
               className="bg-[#FFBE0A] rounded-full mr-5 cursor-pointer"
             />

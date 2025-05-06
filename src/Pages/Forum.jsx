@@ -3,8 +3,40 @@ import { AiOutlineLike } from "react-icons/ai";
 import { FaRegEye } from "react-icons/fa6";
 import { IoTimeOutline } from "react-icons/io5";
 import { NavLink } from "react-router";
+import ReactQuill, { Quill } from "react-quill-new";
+import "react-quill-new/dist/quill.snow.css";
+import { MdClose } from "react-icons/md";
+import { useState } from "react";
+import ModalForum from "../Modal/ModalForum";
 
 function Forum() {
+  const [open, setOpen] = useState(false);
+  const [value, setValue] = useState("");
+  // Custom ToolBar
+  const modules = {
+    toolbar: [
+      [{ header: [1, 2, false] }],
+      ["bold", "italic", "underline", "strike", "blockquote"],
+      [{ lsit: "ordered" }, { list: "bullet" }],
+      ["link", "image"],
+      [{ "code-block": true }],
+      ["clean"],
+    ],
+  };
+  const formats = [
+    "header",
+    "bold",
+    "italic",
+    "strike",
+    "blockquote",
+    "list",
+    "bullet",
+    "link",
+    "indent",
+    "image",
+    "code-block",
+  ];
+
   return (
     <>
       <div className="flex justify-between items-center ml-5 mt-5">
@@ -16,9 +48,46 @@ function Forum() {
           </button>
 
           <div>
-            <button className="text-xs rounded-lg bg-[#FF658A] text-white p-2 cursor-pointer">
+            <button
+              onClick={() => setOpen(true)}
+              className="text-xs rounded-lg bg-[#FF658A] text-white p-2 cursor-pointer"
+            >
               Fragen stellen
             </button>
+
+            <ModalForum open={open} onClose={() => setOpen(false)}>
+              <div className="bg-white h-[400px] rounded-lg ml-5 overflow-hidden">
+                <div>
+                  <div className="flex justify-between items-center">
+                    <h3>Titel</h3>
+                    <MdClose
+                      className="cursor-pointer"
+                      onClick={() => setOpen(false)}
+                    />
+                  </div>
+                  <input
+                    className="my-3 h-[30px] w-full bg-slate-100"
+                    type="text"
+                  />
+                </div>
+                <div>
+                  <h3 className="mb-3">Inhalt</h3>
+                  <ReactQuill
+                    theme="snow"
+                    value={value}
+                    modules={modules}
+                    formats={formats}
+                    onChange={setValue}
+                    className="quill-blog"
+                  />
+                </div>
+              </div>
+              <div className="ml-5">
+                <button className="mt-3 text-xs rounded-lg bg-[#FF658A] text-white p-2 cursor-pointer w-full">
+                  Jetzt fragen
+                </button>
+              </div>
+            </ModalForum>
           </div>
         </div>
       </div>
@@ -46,15 +115,15 @@ function Forum() {
               </div>
             </div>
 
-            <div className="flex flex-col w-1/3 items-center">
-              <p className="bg-black text-white p-4 justify-center">24</p>
-              <div className="flex gap-3 mt-2 items-center">
+            <div className="flex flex-col w-1/3">
+              <p className="bg-black text-white p-4 self-center">24</p>
+              <div className="grid grid-cols-2 gap-4 mt-2 place-content-between">
                 <FaRegEye />
-                <p className="text-right">245</p>
+                <p className="text-end">245</p>
               </div>
-              <div className="flex gap-2 mt-2 items-center">
+              <div className="grid grid-cols-2 gap-4 mt-2 place-content-between">
                 <IoTimeOutline />
-                <p>2 min.</p>
+                <p className="text-end">2 min.</p>
               </div>
             </div>
           </div>

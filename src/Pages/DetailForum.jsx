@@ -5,8 +5,46 @@ import { AiOutlineDislike } from "react-icons/ai";
 import { FaRegEye } from "react-icons/fa6";
 import { IoTimeOutline } from "react-icons/io5";
 import { TfiControlRecord } from "react-icons/tfi";
+import { useState } from "react";
+import ReactQuill, { Quill } from "react-quill-new";
+import "react-quill-new/dist/quill.snow.css";
 
 function DetailForum() {
+  const [value, setValue] = useState("");
+  const [valueKommentar, setValueKommentar] = useState("");
+
+  // Custom ToolBar
+  const modules = {
+    toolbar: [
+      [{ header: [1, 2, false] }],
+      ["bold", "italic", "underline", "strike", "blockquote"],
+      [{ lsit: "ordered" }, { list: "bullet" }],
+      ["link", "image"],
+      [{ "code-block": true }],
+      ["clean"],
+    ],
+  };
+
+  const modulesKommentar = {
+    toolbar: [
+      ["bold", "italic", "underline", "strike", "blockquote"],
+      [{ lsit: "ordered" }, { list: "bullet" }],
+    ],
+  };
+  const formats = [
+    "header",
+    "bold",
+    "italic",
+    "strike",
+    "blockquote",
+    "list",
+    "bullet",
+    "link",
+    "indent",
+    "image",
+    "code-block",
+  ];
+
   return (
     <>
       <div className="flex justify-end">
@@ -87,9 +125,21 @@ function DetailForum() {
             <p className="bg-slate-200 px-4 rounded-full">#Javascript</p>
           </div>
 
-          {/* QUILL von Yannis. Editor zum kommentieren der Frage */}
-          <div className="bg-slate-100 h-[100px] rounded-lg">
-            <p>Kommentar Feld</p>
+          {/* Editor zum kommentieren der Frage */}
+          <div className="bg-slate-100 h-[120px] rounded-lg overflow-hidden">
+            <ReactQuill
+              theme="snow"
+              value={valueKommentar}
+              modules={modulesKommentar}
+              formats={formats}
+              onChange={setValueKommentar}
+              className="quill-kommentar"
+            />
+          </div>
+          <div>
+            <button className="mt-3 text-xs rounded-lg bg-slate-500 text-white p-2 cursor-pointer w-full">
+              Kommentare schicken
+            </button>
           </div>
 
           {/* Antwort von einige Nutzer */}
@@ -114,8 +164,20 @@ function DetailForum() {
       <h2 className="font-bold ml-5 mb-3">Antwort geben</h2>
 
       {/* Editor Bereich */}
-      <div className="bg-white h-[100px] rounded-lg ml-5">
-        <p>Antwort feld mit Editor von Yannis</p>
+      <div className="bg-white h-[250px] rounded-lg ml-5 overflow-hidden">
+        <ReactQuill
+          theme="snow"
+          value={value}
+          modules={modules}
+          formats={formats}
+          onChange={setValue}
+          className="quill-antwort"
+        />
+      </div>
+      <div className="ml-5">
+        <button className="mt-3 text-xs rounded-lg bg-[#FF658A] text-white p-2 cursor-pointer w-full">
+          Antwort schicken
+        </button>
       </div>
 
       {/* Kommentare Section */}

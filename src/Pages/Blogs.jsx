@@ -4,8 +4,40 @@ import { IoTimeOutline } from "react-icons/io5";
 import { AiOutlineLike } from "react-icons/ai";
 import { TfiControlRecord } from "react-icons/tfi";
 import { NavLink } from "react-router";
+import { useState } from "react";
+import ModalBlog from "../Modal/ModalBlog";
+import ReactQuill, { Quill } from "react-quill-new";
+import "react-quill-new/dist/quill.snow.css";
+import { MdClose } from "react-icons/md";
 
 function Blogs() {
+  const [open, setOpen] = useState(false);
+  const [value, setValue] = useState("");
+  // Custom ToolBar
+  const modules = {
+    toolbar: [
+      [{ header: [1, 2, false] }],
+      ["bold", "italic", "underline", "strike", "blockquote"],
+      [{ lsit: "ordered" }, { list: "bullet" }],
+      ["link", "image"],
+      [{ "code-block": true }],
+      ["clean"],
+    ],
+  };
+  const formats = [
+    "header",
+    "bold",
+    "italic",
+    "strike",
+    "blockquote",
+    "list",
+    "bullet",
+    "link",
+    "indent",
+    "image",
+    "code-block",
+  ];
+
   return (
     <>
       <div className="flex justify-between items-center ml-5 mt-5">
@@ -17,9 +49,45 @@ function Blogs() {
           </button>
 
           <div>
-            <button className="text-xs rounded-lg bg-[#FF658A] text-white p-2 cursor-pointer">
-              Fragen stellen
+            <button
+              onClick={() => setOpen(true)}
+              className="text-xs rounded-lg bg-[#FF658A] text-white p-2 cursor-pointer"
+            >
+              Blogs erstellen
             </button>
+            <ModalBlog open={open} onClose={() => setOpen(false)}>
+              <div className="bg-white h-[400px] rounded-lg ml-5 overflow-hidden">
+                <div>
+                  <div className="flex justify-between items-center">
+                    <h3>Blog Titel</h3>
+                    <MdClose
+                      className="cursor-pointer"
+                      onClick={() => setOpen(false)}
+                    />
+                  </div>
+                  <input
+                    className="my-3 h-[30px] w-full bg-slate-100"
+                    type="text"
+                  />
+                </div>
+                <div>
+                  <h3 className="mb-3">Inhalt</h3>
+                  <ReactQuill
+                    theme="snow"
+                    value={value}
+                    modules={modules}
+                    formats={formats}
+                    onChange={setValue}
+                    className="quill-blog"
+                  />
+                </div>
+              </div>
+              <div className="ml-5">
+                <button className="mt-3 text-xs rounded-lg bg-[#FF658A] text-white p-2 cursor-pointer w-full">
+                  Blog erstellen
+                </button>
+              </div>
+            </ModalBlog>
           </div>
         </div>
       </div>
@@ -47,19 +115,19 @@ function Blogs() {
               </div>
             </div>
 
-            <div className="flex flex-col w-1/3 items-center">
-              <div className="flex gap-3 mt-2">
+            <div className="flex flex-col w-1/3">
+              <div className="grid grid-cols-2 gap-4 mt-2 place-content-between">
                 <AiOutlineLike />
-                <p>4</p>
+                <p className="text-end">4</p>
               </div>
 
-              <div className="flex gap-3 mt-2">
+              <div className="grid grid-cols-2 gap-4 mt-2 place-content-between">
                 <FaRegEye />
-                <p className="text-right">245</p>
+                <p className="text-end">245</p>
               </div>
-              <div className="flex gap-2 mt-2">
+              <div className="grid grid-cols-2 gap-4 mt-2 place-content-between">
                 <IoTimeOutline />
-                <p>2 min.</p>
+                <p className="text-end">2 min.</p>
               </div>
             </div>
           </div>

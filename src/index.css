@@ -21,6 +21,49 @@ h4 {
   font-weight: 600;
 }
 
+.ql-toolbar {
+  border-left: none !important;
+  border-right: none !important;
+  border-top: none !important;
+  z-index: 10;
+}
+
+.quill-antwort .ql-toolbar {
+  position: sticky;
+  top: 0;
+  background-color: white;
+}
+.quill-antwort .ql-container {
+  height: 220px;
+  overflow-y: scroll;
+  font-size: 1rem;
+  border: none !important;
+}
+
+.quill-kommentar .ql-toolbar {
+  position: sticky;
+  top: 0;
+}
+
+.quill-kommentar .ql-container {
+  height: 100px;
+  overflow-y: auto;
+  font-size: 0.875rem;
+  border: none !important;
+}
+
+.quill-blog .ql-toolbar {
+  position: sticky;
+  top: 0;
+  background-color: var(--color-slate-100);
+}
+.quill-blog .ql-container {
+  height: 400px;
+  overflow-y: scroll;
+  font-size: 1rem;
+  border: none !important;
+  background-color: var(--color-slate-100);
+}
 /* 
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
