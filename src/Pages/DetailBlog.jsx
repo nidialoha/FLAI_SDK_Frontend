@@ -5,8 +5,37 @@ import { AiOutlineDislike } from "react-icons/ai";
 import { FaRegEye } from "react-icons/fa6";
 import { IoTimeOutline } from "react-icons/io5";
 import { TfiControlRecord } from "react-icons/tfi";
+import { useState } from "react";
+import ReactQuill, { Quill } from "react-quill-new";
+import "react-quill-new/dist/quill.snow.css";
 
 function DetailBlog() {
+  const [value, setValue] = useState("");
+  // Custom ToolBar
+  const modules = {
+    toolbar: [
+      [{ header: [1, 2, false] }],
+      ["bold", "italic", "underline", "strike", "blockquote"],
+      [{ lsit: "ordered" }, { list: "bullet" }],
+      ["link", "image"],
+      [{ "code-block": true }],
+      ["clean"],
+    ],
+  };
+  const formats = [
+    "header",
+    "bold",
+    "italic",
+    "strike",
+    "blockquote",
+    "list",
+    "bullet",
+    "link",
+    "indent",
+    "image",
+    "code-block",
+  ];
+
   return (
     <>
       {/* Filter Bereich & Button Fragen erstellen*/}
@@ -87,9 +116,21 @@ function DetailBlog() {
       </div>
       <h2 className="font-bold ml-5 mb-4">Kommentieren</h2>
 
-      {/* Ersetzen durch Quill von Yannis */}
-      <div className="bg-white ml-5 pt-3 rounded-lg">
-        <p className="ml-5 py-4 h-[150px]">Text block Quill von Yannis</p>
+      {/* Editor Bereich */}
+      <div className="bg-white h-[220px] rounded-lg ml-5 overflow-hidden">
+        <ReactQuill
+          theme="snow"
+          value={value}
+          modules={modules}
+          formats={formats}
+          onChange={setValue}
+          className="quill-antwort"
+        />
+      </div>
+      <div className="ml-5">
+        <button className="mt-3 text-xs rounded-lg bg-[#FF658A] text-white p-2 cursor-pointer w-full">
+          Antwort schicken
+        </button>
       </div>
 
       {/* Kommentare Section */}
