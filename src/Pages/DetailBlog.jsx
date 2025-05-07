@@ -8,9 +8,12 @@ import { TfiControlRecord } from "react-icons/tfi";
 import { useState } from "react";
 import ReactQuill, { Quill } from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css";
+import { useNavigate } from "react-router-dom";
+import { FaArrowLeft } from "react-icons/fa";
 
 function DetailBlog() {
   const [value, setValue] = useState("");
+  let navigate = useNavigate();
   // Custom ToolBar
   const modules = {
     toolbar: [
@@ -38,7 +41,7 @@ function DetailBlog() {
 
   return (
     <>
-      {/* Filter Bereich & Button Fragen erstellen*/}
+      {/* Filter Bereich & Button Fragen erstellen
       <div className="flex justify-end">
         <div className="flex gap-8 items-center pt-4">
           <button className="flex">
@@ -47,13 +50,23 @@ function DetailBlog() {
           </button>
 
           <div>
-            <button className="text-xs rounded-lg bg-[#FF658A] text-white p-2 cursor-pointer">
-              Fragen stellen
+            <button
+              onClick={() => setOpen(true)}
+              className="text-xs rounded-lg bg-[#FF658A] text-white p-2 cursor-pointer"
+            >
+              Blog erstellen
             </button>
           </div>
         </div>
-      </div>
+      </div> */}
 
+      <button
+        className="flex gap-3 ml-5 mt-3 cursor-pointer hover:font-black"
+        onClick={() => navigate(-1)}
+      >
+        <FaArrowLeft />
+        <p>Zurück</p>
+      </button>
       {/* Karte */}
 
       <div className="bg-white rounded-lg ml-5 mt-5">

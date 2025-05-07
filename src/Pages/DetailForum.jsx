@@ -8,10 +8,13 @@ import { TfiControlRecord } from "react-icons/tfi";
 import { useState } from "react";
 import ReactQuill, { Quill } from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css";
+import { useNavigate } from "react-router-dom";
+import { FaArrowLeft } from "react-icons/fa";
 
 function DetailForum() {
   const [value, setValue] = useState("");
   const [valueKommentar, setValueKommentar] = useState("");
+  let navigate = useNavigate();
 
   // Custom ToolBar
   const modules = {
@@ -47,7 +50,7 @@ function DetailForum() {
 
   return (
     <>
-      <div className="flex justify-end">
+      {/* <div className="flex justify-end">
         <div className="flex gap-8 items-center pt-4">
           <button className="flex">
             <p>Filter</p>
@@ -60,8 +63,14 @@ function DetailForum() {
             </button>
           </div>
         </div>
-      </div>
-
+      </div> */}
+      <button
+        className="flex gap-3 ml-5 mt-3 cursor-pointer hover:font-black"
+        onClick={() => navigate(-1)}
+      >
+        <FaArrowLeft />
+        <p>Zurück</p>
+      </button>
       <div className="bg-white rounded-lg ml-5 mt-5">
         <div className="flex justify-between items-baseline">
           <h6 className="pt-3 pb-4 ml-5 font-bold">
@@ -162,7 +171,6 @@ function DetailForum() {
         </div>
       </div>
       <h2 className="font-bold ml-5 mb-3">Antwort geben</h2>
-
       {/* Editor Bereich */}
       <div className="bg-white h-[250px] rounded-lg ml-5 overflow-hidden">
         <ReactQuill
@@ -179,7 +187,6 @@ function DetailForum() {
           Antwort schicken
         </button>
       </div>
-
       {/* Kommentare Section */}
       <div>
         <h2 className="font-bold ml-5 mt-4">Antwort von Nutzer</h2>

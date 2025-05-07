@@ -58,7 +58,7 @@ h4 {
   background-color: var(--color-slate-100);
 }
 .quill-blog .ql-container {
-  height: 400px;
+  height: 250px;
   overflow-y: scroll;
   font-size: 1rem;
   border: none !important;

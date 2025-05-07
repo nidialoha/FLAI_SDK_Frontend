@@ -8,6 +8,32 @@ import { MdClose } from "react-icons/md";
 function NavBar() {
   const [open, setOpen] = useState(false);
 
+  const [notifications, setNotifications] = useState([
+    {
+      id: 1,
+      avatar: "", // z.B. Bild-URL
+      message: "Lorem ipsum dolor sit ...",
+      time: "vor 3 Min.",
+    },
+    {
+      id: 2,
+      avatar: "",
+      message: "sit amet consectetur adipisicing....",
+      time: "vor 10 Min.",
+    },
+    {
+      id: 3,
+      avatar: "",
+      message: "Notification",
+      time: "vor 30 Min.",
+    },
+  ]);
+
+  const handleDelete = (id) => {
+    const newNotifications = notifications.filter((item) => item.id !== id);
+    setNotifications(newNotifications);
+  };
+
   return (
     <>
       <div className="flex justify-between pt-4">
@@ -51,26 +77,21 @@ function NavBar() {
                     onClick={() => setOpen(false)}
                   />
                 </div>
-                <div className="grid grid-cols-7 gap-6 items-center">
-                  <div className="bg-slate-100 rounded-full h-10 w-10"></div>
-                  <p className="col-span-3 ">Lorem ipsum dolor sit ...</p>
-                  <p className="col-span-2">vor 3 Min.</p>
-                  <FaTrashAlt className="hover:text-red-500" />
-                </div>
-                <div className="grid grid-cols-7 gap-6 items-center">
-                  <div className="bg-slate-100 rounded-full h-10 w-10"></div>
-                  <p className="col-span-3">
-                    sit amet consectetur adipisicing....
-                  </p>
-                  <p className="col-span-2">vor 10 Min.</p>
-                  <FaTrashAlt className="hover:text-red-500" />
-                </div>
-                <div className="grid grid-cols-7 gap-6 items-center">
-                  <div className="bg-slate-100 rounded-full h-10 w-10"></div>
-                  <p className="col-span-3 ">Notification</p>
-                  <p className="col-span-2">vor 30 Min.</p>
-                  <FaTrashAlt className="hover:text-red-500" />
-                </div>
+
+                {notifications.map((n) => (
+                  <div
+                    key={n.id}
+                    className="grid grid-cols-7 gap-4 items-center mb-3"
+                  >
+                    <div className="bg-slate-100 rounded-full h-10 w-10"></div>
+                    <p className="col-span-3">{n.message}</p>
+                    <p className="col-span-2">{n.time}</p>
+                    <FaTrashAlt
+                      className="hover:text-red-500 cursor-pointer"
+                      onClick={() => handleDelete(n.id)}
+                    />
+                  </div>
+                ))}
               </div>
             </>
           </Modal>
