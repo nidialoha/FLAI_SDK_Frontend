@@ -1,17 +1,50 @@
 import { CiFilter } from "react-icons/ci";
-import { AiOutlineLike } from "react-icons/ai";
-import { FaRegEye } from "react-icons/fa6";
-import { IoTimeOutline } from "react-icons/io5";
-import { NavLink } from "react-router";
 import ReactQuill, { Quill } from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css";
 import { MdClose } from "react-icons/md";
 import { useState } from "react";
 import ModalForum from "../Modal/ModalForum";
+import ForumKarte from "../Components/ForumKarte";
 
 function Forum() {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState("");
+  const [titel, setTitel] = useState("");
+  const [selectedTags, setSelectedTags] = useState([]);
+  const [customTag, setCustomTag] = useState("");
+
+  const availableTags = ["CSS", "JS", "React"];
+
+  const addTag = (tag) => {
+    if (!selectedTags.includes(tag)) {
+      setSelectedTags([...selectedTags, tag]);
+    }
+  };
+
+  const removeTag = (tagToRemove) => {
+    setSelectedTags(selectedTags.filter((tag) => tag !== tagToRemove));
+  };
+
+  const handleCustomTagAdd = () => {
+    const tag = customTag.trim();
+    if (tag && !selectedTags.includes(tag)) {
+      setSelectedTags([...selectedTags, tag]);
+      setCustomTag("");
+    }
+  };
+
+  const forumBeitraege = [
+    {
+      id: 1,
+      title: "Mein CSS funktioniert nicht!",
+      text: "The classic Latin passage that just never gets old...",
+      tags: ["test", "CSS"],
+      likes: 4,
+      views: 245,
+      time: "2 min.",
+      answers: 24,
+    },
+  ];
   // Custom ToolBar
   const modules = {
     toolbar: [
@@ -68,7 +101,60 @@ function Forum() {
                   <input
                     className="my-3 h-[30px] w-full bg-slate-100"
                     type="text"
+                    onChange={setTitel}
                   />
+                </div>
+
+                <div>
+                  <h3>Schlagwörter</h3>
+
+                  {/* Anzeige der ausgewählten Tags */}
+                  <div className="flex flex-wrap gap-2 my-2">
+                    {selectedTags.map((tag, i) => (
+                      <div
+                        key={i}
+                        className="flex items-center gap-1 bg-blue-100 px-3 py-1 rounded-full text-sm"
+                      >
+                        #{tag}
+                        <button
+                          onClick={() => removeTag(tag)}
+                          className="text-red-500 font-bold"
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Vordefinierte Tags */}
+                  <div className="flex gap-3 my-2">
+                    {availableTags.map((tag, i) => (
+                      <button
+                        key={i}
+                        onClick={() => addTag(tag)}
+                        className="bg-slate-100 px-3 rounded-lg hover:bg-slate-300 text-sm"
+                      >
+                        #{tag}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Custom-Tag Eingabe */}
+                  <div className="flex gap-5 mt-2">
+                    <input
+                      type="text"
+                      value={customTag}
+                      onChange={(e) => setCustomTag(e.target.value)}
+                      placeholder="Neues Schlagwort"
+                      className="bg-slate-100 px-3 py-1 text-sm w-3/4"
+                    />
+                    <button
+                      onClick={handleCustomTagAdd}
+                      className="bg-slate-500 cursor-pointer text-white px-3 rounded-lg text-sm w-1/4"
+                    >
+                      Hinzufügen
+                    </button>
+                  </div>
                 </div>
                 <div>
                   <h3 className="mb-3">Inhalt</h3>
@@ -92,43 +178,18 @@ function Forum() {
         </div>
       </div>
 
-      <NavLink to="/detailforum">
-        <div className="mt-4 shadow-md p-6 ml-5 rounded-xl bg-white">
-          <div className="flex gap-10 ">
-            <div className="flex flex-col items-center">
-              <p className="bg-slate-400 p-6 text-center rounded-full h-14 w-14"></p>
-              <div className="flex gap-2 text-right mt-3 items-center">
-                <AiOutlineLike />
-                <p>4</p>
-              </div>
-            </div>
-            <div className="flex flex-col gap-2">
-              <h2 className="font-bold">Mein CSS funktioniert nicht!</h2>
-              <p className="">
-                The classic Latin passage that just never gets old, enjoy as
-                much (or as little) lorem ipsum as you can handle with our easy
-                to ...
-              </p>
-              <div className="flex gap-6">
-                <p className="bg-slate-300 px-3 rounded-lg">#test</p>
-                <p className="bg-slate-300 px-3 rounded-lg">#CSS</p>
-              </div>
-            </div>
-
-            <div className="flex flex-col w-1/3">
-              <p className="bg-black text-white p-4 self-center">24</p>
-              <div className="grid grid-cols-2 gap-4 mt-2 place-content-between">
-                <FaRegEye />
-                <p className="text-end">245</p>
-              </div>
-              <div className="grid grid-cols-2 gap-4 mt-2 place-content-between">
-                <IoTimeOutline />
-                <p className="text-end">2 min.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </NavLink>
+      {forumBeitraege.map((eintrag) => (
+        <ForumKarte
+          key={eintrag.id}
+          title={eintrag.title}
+          text={eintrag.text}
+          tags={eintrag.tags}
+          likes={eintrag.likes}
+          views={eintrag.views}
+          time={eintrag.time}
+          answers={eintrag.answers}
+        />
+      ))}
 
       <div className="flex justify-center items-end mt-60 mb-10">
         <div className="join">
