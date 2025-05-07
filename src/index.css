@@ -64,6 +64,13 @@ h4 {
   border: none !important;
   background-color: var(--color-slate-100);
 }
+
+.quill-kommentar-antwort .ql-toolbar {
+  display: none;
+}
+.quill-kommentar-antwort .ql-container {
+  border: none !important;
+}
 /* 
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
