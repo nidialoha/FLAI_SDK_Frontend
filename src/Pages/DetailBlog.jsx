@@ -10,6 +10,8 @@ import { useAuth0 } from "@auth0/auth0-react";
 function DetailBlog() {
   const [value, setValue] = useState("");
   const [antwort, setAntwort] = useState([]);
+  const [kommentarWerte, setKommentarWerte] = useState({});
+  const [aktivesKommentarFeld, setAktivesKommentarFeld] = useState(null);
   const { user, isAuthenticated } = useAuth0();
 
   const detailBlog = [
@@ -36,8 +38,8 @@ function DetailBlog() {
         likeAntwort: 6,
         dislikeAntwort: 2,
         kommentarAntwort: [
-          "Kommentar 1 zu Kommentar",
-          "Kommentar 2 zu Kommentar",
+          "Anna kommentiert: Kommentar 1 zu Kommentar",
+          "Jackson kommentiert: Kommentar 2 zu Kommentar",
         ],
         userReaction: null,
       },
@@ -105,6 +107,16 @@ function DetailBlog() {
   };
 
   let navigate = useNavigate();
+
+  const modulesKommentar = {
+    toolbar: [
+      [{ header: [1, 2, false] }],
+      ["bold", "italic", "underline"],
+      ["link"],
+      [{ list: "ordered" }, { list: "bullet" }],
+      ["clean"],
+    ],
+  };
   // Custom ToolBar
   const modules = {
     toolbar: [
@@ -178,17 +190,81 @@ function DetailBlog() {
         <h2 className="font-bold ml-5 mt-4">Kommentare</h2>
       </div>
       {antwort.map((blogEintrag) => (
-        <AntwortKarte
-          key={blogEintrag.id}
-          nutzerNameKommentar={blogEintrag.nutzerNameKommentar}
-          nutzerBadges={blogEintrag.nutzerBadges}
-          kommentarPost={blogEintrag.kommentarPost}
-          likeAntwort={blogEintrag.likeAntwort}
-          dislikeAntwort={blogEintrag.dislikeAntwort}
-          kommentarAntwort={blogEintrag.kommentarAntwort}
-          userReaction={blogEintrag.userReaction}
-          onReact={(type) => toggleReaction(blogEintrag.id, type)}
-        />
+        <div key={blogEintrag.id}>
+          <AntwortKarte
+            key={blogEintrag.id}
+            nutzerNameKommentar={blogEintrag.nutzerNameKommentar}
+            nutzerBadges={blogEintrag.nutzerBadges}
+            kommentarPost={blogEintrag.kommentarPost}
+            likeAntwort={blogEintrag.likeAntwort}
+            dislikeAntwort={blogEintrag.dislikeAntwort}
+            kommentarAntwort={blogEintrag.kommentarAntwort}
+            userReaction={blogEintrag.userReaction}
+            onReact={(type) => toggleReaction(blogEintrag.id, type)}
+          />
+
+          {/* Button zum Kommentieren */}
+          <button
+            className="underline text-xs italic ml-5 mt-2 cursor-pointer"
+            onClick={() =>
+              setAktivesKommentarFeld(
+                aktivesKommentarFeld === blogEintrag.id ? null : blogEintrag.id
+              )
+            }
+          >
+            Kommentieren
+          </button>
+
+          {/* Kommentar-Eingabefeld anzeigen, wenn aktiv */}
+          {aktivesKommentarFeld === blogEintrag.id && (
+            <div className="ml-5 mt-2 mb-4 bg-slate-100 p-2 rounded-lg">
+              <ReactQuill
+                theme="snow"
+                value={kommentarWerte[blogEintrag.id] || ""}
+                onChange={(content) =>
+                  setKommentarWerte((prev) => ({
+                    ...prev,
+                    [blogEintrag.id]: content,
+                  }))
+                }
+                modules={modulesKommentar}
+                formats={formats}
+                className="quill-kommentar-antwort"
+              />
+              <button
+                onClick={() => {
+                  const neuerKommentar = `${
+                    user?.name || "Anonym"
+                  } kommentiert: ${kommentarWerte[blogEintrag.id]}`;
+                  if (!kommentarWerte[blogEintrag.id]) return;
+
+                  setAntwort((prevAntwort) =>
+                    prevAntwort.map((eintrag) =>
+                      eintrag.id === blogEintrag.id
+                        ? {
+                            ...eintrag,
+                            kommentarAntwort: [
+                              ...eintrag.kommentarAntwort,
+                              neuerKommentar,
+                            ],
+                          }
+                        : eintrag
+                    )
+                  );
+
+                  setKommentarWerte((prev) => ({
+                    ...prev,
+                    [blogEintrag.id]: "",
+                  }));
+                  setAktivesKommentarFeld(null);
+                }}
+                className="mt-2 text-xs rounded-lg bg-slate-500 text-white p-2 cursor-pointer"
+              >
+                Kommentar senden
+              </button>
+            </div>
+          )}
+        </div>
       ))}
     </>
   );
