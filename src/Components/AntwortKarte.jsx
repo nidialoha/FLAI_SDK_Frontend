@@ -70,9 +70,9 @@ function AntwortKarte({
         {/* Inhalt Kommentare */}
         <div>
           <p className="ml-5 text-sm font-semibold mt-3">{kommentarPost}</p>
-          <button className="underline text-xs italic ml-5 hover:font-bold cursor-pointer">
+          {/* <button className="underline text-xs italic ml-5 hover:font-bold cursor-pointer">
             Kommentieren
-          </button>
+          </button> */}
           <div className="ml-9">
             {kommentarAntwort.map((kommentarAntwort, idx) => (
               <li key={idx} className="mt-2 text-xs">
