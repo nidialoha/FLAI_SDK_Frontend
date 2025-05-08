@@ -5,6 +5,11 @@ import { TfiControlRecord } from "react-icons/tfi";
 import { NavLink } from "react-router";
 
 function BlogKarte({ title, text, tags, badges, likes, views, time }) {
+  const stripHtml = (html) => {
+    const tmp = document.createElement("div");
+    tmp.innerHTML = html;
+    return tmp.textContent || tmp.innerText || "";
+  };
   return (
     <>
       <NavLink to="/detailblog">
@@ -20,7 +25,9 @@ function BlogKarte({ title, text, tags, badges, likes, views, time }) {
 
             <div className="col-span-3">
               <h2 className="font-bold mb-4">{title}</h2>
-              <p className="">{text}</p>
+              <p className="line-clamp-2 text-gray-700 text-sm">
+                {stripHtml(text)}
+              </p>
               <div className="flex gap-2 flex-wrap">
                 {tags.map((tag, idx) => (
                   <p key={idx} className="bg-slate-300 px-3 rounded-lg mt-6">
