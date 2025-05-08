@@ -5,9 +5,14 @@ import { NavLink } from "react-router-dom";
 import { MdQuestionAnswer } from "react-icons/md";
 
 function ForumKarte({ title, text, tags, likes, views, time, answers }) {
+  const stripHtml = (html) => {
+    const tmp = document.createElement("div");
+    tmp.innerHTML = html;
+    return tmp.textContent || tmp.innerText || "";
+  };
   return (
     <NavLink to="/detailforum">
-      <div className="mt-4 shadow-md p-6 ml-5 rounded-lg bg-white">
+      <div className="bg-white mt-4 shadow-md p-6 ml-5 rounded-lg">
         <div className="grid grid-cols-5 gap-10">
           <div className="flex flex-col items-center border-r-1">
             <p className="bg-slate-400 p-6 text-center rounded-full h-14 w-14"></p>
@@ -18,7 +23,10 @@ function ForumKarte({ title, text, tags, likes, views, time, answers }) {
           </div>
           <div className="col-span-3">
             <h2 className="font-bold mb-4">{title}</h2>
-            <p>{text}</p>
+            <p className="line-clamp-2 text-gray-700 text-sm">
+              {stripHtml(text)}
+            </p>
+
             <div className="flex gap-2 flex-wrap">
               {tags.map((tag, idx) => (
                 <p key={idx} className="bg-slate-300 px-3 rounded-lg mt-6">
