@@ -3,8 +3,9 @@ import { IoTimeOutline } from "react-icons/io5";
 import { AiOutlineLike } from "react-icons/ai";
 import { TfiControlRecord } from "react-icons/tfi";
 import { NavLink } from "react-router";
+import ReactMarkdown from "react-markdown";
 
-function BlogKarte({ title, text, tags, badges, likes, views, time }) {
+function BlogKarte({ id, title, text, tags, badges, likes, views, time }) {
   const stripHtml = (html) => {
     const tmp = document.createElement("div");
     tmp.innerHTML = html;
@@ -12,7 +13,7 @@ function BlogKarte({ title, text, tags, badges, likes, views, time }) {
   };
   return (
     <>
-      <NavLink to="/detailblog">
+      <NavLink to={`/detailblog/${id}`}>
         <div className="mt-4 shadow-md p-6 ml-5 rounded-xl bg-white">
           <div className="grid grid-cols-5 gap-10 ">
             <div className="flex flex-col items-center border-r-1">
@@ -25,9 +26,7 @@ function BlogKarte({ title, text, tags, badges, likes, views, time }) {
 
             <div className="col-span-3">
               <h2 className="font-bold mb-4">{title}</h2>
-              <p className="line-clamp-2 text-gray-700 text-sm">
-                {stripHtml(text)}
-              </p>
+              <p className=" text-gray-700 text-sm">{stripHtml(text)}</p>
               <div className="flex gap-2 flex-wrap">
                 {tags.map((tag, idx) => (
                   <p key={idx} className="bg-slate-300 px-3 rounded-lg mt-6">

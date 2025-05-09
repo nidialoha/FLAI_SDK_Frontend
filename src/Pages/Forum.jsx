@@ -5,6 +5,7 @@ import { MdClose } from "react-icons/md";
 import { useState } from "react";
 import ModalForum from "../Modal/ModalForum";
 import ForumKarte from "../Components/ForumKarte";
+import ReactMarkdown from "react-markdown";
 
 function Forum() {
   const [open, setOpen] = useState(false);
@@ -54,7 +55,7 @@ function Forum() {
       tags: selectedTags,
       likes: 0,
       views: 0,
-      time: "gerade eben",
+      time: "jetzt",
       answers: 0,
     };
 
@@ -169,6 +170,7 @@ function Forum() {
               placeholder="Neues Schlagwort"
               className="bg-slate-100 px-3 py-1 text-sm w-3/4"
             />
+
             <button
               onClick={handleCustomTagAdd}
               className="bg-slate-500 cursor-pointer text-white px-3 rounded-lg text-sm w-1/4"
