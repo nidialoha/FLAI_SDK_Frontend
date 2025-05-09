@@ -14,6 +14,11 @@ function AntwortKarte({
   onReact,
 }) {
   const { user, isAuthenticated } = useAuth0();
+  const stripHtml = (html) => {
+    const tmp = document.createElement("div");
+    tmp.innerHTML = html;
+    return tmp.textContent || tmp.innerText || "";
+  };
   return (
     <>
       {/* Kommentare Section */}
@@ -69,14 +74,21 @@ function AntwortKarte({
 
         {/* Inhalt Kommentare */}
         <div>
-          <p className="ml-5 text-sm font-semibold mt-3">{kommentarPost}</p>
+          {/* <p className="ml-5 text-sm font-semibold mt-3">
+            {stripHtml(kommentarPost)}
+          </p> */}
+
+          <div
+            className="ml-5 text-sm font-semibold mt-3 leading-relaxed space-y-2 prose prose-sm max-w-none"
+            dangerouslySetInnerHTML={{ __html: kommentarPost }}
+          ></div>
           {/* <button className="underline text-xs italic ml-5 hover:font-bold cursor-pointer">
             Kommentieren
           </button> */}
           <div className="ml-9">
             {kommentarAntwort.map((kommentarAntwort, idx) => (
               <li key={idx} className="mt-2 text-xs">
-                {kommentarAntwort}
+                {stripHtml(kommentarAntwort)}
               </li>
             ))}
           </div>

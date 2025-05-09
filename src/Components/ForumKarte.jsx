@@ -3,6 +3,7 @@ import { FaRegEye } from "react-icons/fa6";
 import { IoTimeOutline } from "react-icons/io5";
 import { NavLink } from "react-router-dom";
 import { MdQuestionAnswer } from "react-icons/md";
+import Markdown from "react-markdown";
 
 function ForumKarte({ title, text, tags, likes, views, time, answers }) {
   const stripHtml = (html) => {
@@ -25,6 +26,7 @@ function ForumKarte({ title, text, tags, likes, views, time, answers }) {
             <h2 className="font-bold mb-4">{title}</h2>
             <p className="line-clamp-2 text-gray-700 text-sm">
               {stripHtml(text)}
+              {/* <Markdown>{text}</Markdown> */}
             </p>
 
             <div className="flex gap-2 flex-wrap">

@@ -1,6 +1,12 @@
+import ReactMarkdown from "react-markdown";
 function KommentarKarte({ inhalt, profilbild }) {
+  const stripHtml = (html) => {
+    const tmp = document.createElement("div");
+    tmp.innerHTML = html;
+    return tmp.textContent || tmp.innerText || "";
+  };
   return (
-    <div className="ml-9 flex items-start gap-2 mt-2">
+    <div className="ml-9 flex items-center gap-2 mt-2">
       {profilbild && (
         <img
           src={profilbild}
@@ -8,7 +14,8 @@ function KommentarKarte({ inhalt, profilbild }) {
           className="w-8 h-8 rounded-full"
         />
       )}
-      <li className="text-xs list-none">{inhalt}</li>
+      <li className="text-xs list-none">{stripHtml(inhalt)}</li>
+      {/* <ReactMarkdown>{inhalt}</ReactMarkdown> */}
     </div>
   );
 }

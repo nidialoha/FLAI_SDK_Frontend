@@ -6,6 +6,7 @@ import "react-quill-new/dist/quill.snow.css";
 import { MdClose } from "react-icons/md";
 import BlogKarte from "../Components/BlogKarte";
 import { useAuth0 } from "@auth0/auth0-react";
+import { useParams } from "react-router-dom";
 
 function Blogs() {
   const [open, setOpen] = useState(false);
@@ -48,9 +49,10 @@ function Blogs() {
     }
   };
 
+  const { id } = useParams();
   const handleCreateBeitrag = () => {
     const neuerBeitrag = {
-      id: blogBeitraege.length + 1,
+      id: id,
       title: titel,
       nutzerName: user?.name,
       text: value,
@@ -58,7 +60,7 @@ function Blogs() {
       badges: 20,
       likes: 0,
       views: 0,
-      time: "gerade eben",
+      time: "jetzt",
       answers: 0,
     };
 
@@ -206,6 +208,7 @@ function Blogs() {
       {blogBeitraege.map((eintrag) => (
         <BlogKarte
           key={eintrag.id}
+          id={eintrag.id}
           title={eintrag.title}
           text={eintrag.text}
           tags={eintrag.tags}

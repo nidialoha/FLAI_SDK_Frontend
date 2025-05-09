@@ -6,6 +6,7 @@ import { FaArrowLeft } from "react-icons/fa";
 import DetailBlogKarte from "../Components/DetailBlogKarte";
 import AntwortKarte from "../Components/AntwortKarte";
 import { useAuth0 } from "@auth0/auth0-react";
+import { useParams } from "react-router-dom";
 
 function DetailBlog() {
   const [value, setValue] = useState("");
@@ -13,6 +14,8 @@ function DetailBlog() {
   const [kommentarWerte, setKommentarWerte] = useState({});
   const [aktivesKommentarFeld, setAktivesKommentarFeld] = useState(null);
   const { user, isAuthenticated } = useAuth0();
+
+  const { id } = useParams();
 
   const detailBlog = [
     {
@@ -31,8 +34,8 @@ function DetailBlog() {
   useEffect(() => {
     const fetchedAntwort = [
       {
-        id: 1,
-        nutzerNameKommentar: "Bob the Builder",
+        id: { id } + 1,
+        nutzerNameKommentar: user?.name,
         nutzerBadges: 13,
         kommentarPost: "Test kommentar Post",
         likeAntwort: 6,
@@ -53,7 +56,7 @@ function DetailBlog() {
     if (!value.trim() || !isAuthenticated) return;
 
     const neuerKommentar = {
-      id: antwort.length + 1,
+      id: { id },
       nutzerNameKommentar: user?.name || "Anonymer Nutzer",
       nutzerBadges: Math.floor(Math.random() * 10) + 1, // später dynamisch
       kommentarPost: value,
