@@ -1,5 +1,4 @@
-import React from "react";
-import { NavLink } from "react-router";
+import { NavLink, useLocation } from "react-router-dom";
 import { useState } from "react";
 import Modal from "../Modal/Modal";
 import { FaTrashAlt } from "react-icons/fa";

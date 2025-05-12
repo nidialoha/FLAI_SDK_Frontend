@@ -5,14 +5,14 @@ import { useNavigate } from "react-router-dom";
 import { FaArrowLeft } from "react-icons/fa";
 import DetailBlogKarte from "../Components/DetailBlogKarte";
 import AntwortKarte from "../Components/AntwortKarte";
-import { useAuth0 } from "@auth0/auth0-react";
+import { useAuth } from "../Context/AuthProvider";
 
 function DetailBlog() {
   const [value, setValue] = useState("");
   const [antwort, setAntwort] = useState([]);
   const [kommentarWerte, setKommentarWerte] = useState({});
   const [aktivesKommentarFeld, setAktivesKommentarFeld] = useState(null);
-  const { user, isAuthenticated } = useAuth0();
+  const { user, isAuthenticated } = useAuth();
 
   const detailBlog = [
     {

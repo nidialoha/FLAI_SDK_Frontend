@@ -9,8 +9,8 @@ import DetailBlog from "./Pages/DetailBlog";
 import DetailForum from "./Pages/DetailForum";
 import AdminDashboard from "./Pages/AdminDashboard";
 import TextEditor from "./Components/TextEditor";
-
-Route;
+import Signup from "./Pages/Signup";
+import Login from "./Pages/Login";
 
 function App() {
   return (
@@ -18,6 +18,8 @@ function App() {
       <Routes>
         <Route element={<MainLayout />}>
           <Route path="/" element={<Forum />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
           <Route path="/forum" element={<Forum />} />
           <Route path="/blog" element={<Blogs />} />
           <Route path="/dashboard" element={<Dashboard />} />
