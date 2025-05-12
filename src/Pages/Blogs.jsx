@@ -5,7 +5,7 @@ import ReactQuill, { Quill } from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css";
 import { MdClose } from "react-icons/md";
 import BlogKarte from "../Components/BlogKarte";
-import { useAuth0 } from "@auth0/auth0-react";
+import { useAuth } from "../Context/AuthProvider";
 
 function Blogs() {
   const [open, setOpen] = useState(false);
@@ -13,7 +13,7 @@ function Blogs() {
   const [titel, setTitel] = useState("");
   const [selectedTags, setSelectedTags] = useState([]);
   const [customTag, setCustomTag] = useState("");
-  const { user } = useAuth0;
+  const { user } = useAuth();
 
   const [blogBeitraege, setBlogBeitraege] = useState([
     {

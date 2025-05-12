@@ -4,39 +4,96 @@ const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-  }, []);
+  const signup = async (formState) => {
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/users`, {
+        method: "POST",
+        body: JSON.stringify(formState),
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
-  const login = ({ email, passwort }) => {
-    const storedUser = JSON.parse(localStorage.getItem("user"));
-    if (
-      storedUser &&
-      storedUser.email === email &&
-      storedUser.passwort === passwort
-    ) {
-      localStorage.setItem("authToken", "dummy-token");
-      setUser(storedUser);
-      return true;
-    } else {
-      return false;
+      const { token, message, user } = await res.json();
+      if (!res.ok) throw new Error(message);
+      setUser(user);
+      localStorage.setItem("token", token);
+    } catch (error) {
+      console.log(error);
     }
   };
 
-  const logout = () => {
-    localStorage.removeItem("user");
-    localStorage.removeItem("authToken");
-    setUser(null);
+  const login = async (formState) => {
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/users/login`, {
+        method: "POST",
+        body: JSON.stringify(formState),
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      const { token, message, user } = await res.json();
+      console.log({ message, user });
+      if (!res.ok) throw new Error(message);
+      setUser(user);
+      setIsAuthenticated(true);
+      localStorage.setItem("token", token);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  const isAuthenticated = !!user;
+  const logout = async () => {
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/users/logout`, {
+        method: "POST",
+        credentials: "include",
+      });
+      const { message } = await res.json();
+      if (!res.ok) throw new Error(message);
+      localStorage.removeItem("token");
+      setUser(null);
+      setIsAuthenticated(false);
+    } catch (error) {
+      console.error(error.message);
+    }
+  };
+
+  // const sendMe = async () => {
+  //   try {
+  //     const res = await fetch(`${import.meta.env.VITE_API_URL}/users/me`, {
+  //       credentials: "include",
+  //     });
+  //     const { message, data } = await res.json();
+  //     if (!res.ok) throw new Error(message);
+  //     setUser(data);
+  //     setIsAuthenticated(true);
+  //   } catch (error) {
+  //     logout();
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   sendMe();
+  // }, []);
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated, login, logout }}>
+    <AuthContext.Provider
+      value={{
+        signup,
+        login,
+        logout,
+        user,
+        setUser,
+        setIsAuthenticated,
+        isAuthenticated,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

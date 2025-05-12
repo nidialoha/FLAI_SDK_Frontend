@@ -3,12 +3,14 @@ import { FaArrowRight } from "react-icons/fa";
 import { GoPlusCircle } from "react-icons/go";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../Context/AuthProvider";
+import { useEffect } from "react";
 
 function NavBarRechts() {
   const location = useLocation();
   const navigate = useNavigate();
   const isOnDashboard = location.pathname === "/dashboard";
-
+  const [interestsList, setInterestsList] = useState([]);
+  const [topUserList, setTopUserList] = useState([]);
   const { user, isAuthenticated, logout } = useAuth();
 
   const handleLogout = () => {
@@ -16,13 +18,16 @@ function NavBarRechts() {
     navigate("/forum");
   };
 
+  //fetching der Interessen und User mit den meisten Punkten
+  useEffect(() => {}, []);
+
   return (
     <div className="flex flex-col">
       <div className="bg-linear-to-r from-purple-500 to-indigo-500 p-6 mr-6 flex flex-col text-center rounded-lg items-center">
         {isAuthenticated ? (
           <>
             <img
-              src={user.image}
+              src={user.imageURL}
               alt={user.name}
               className="rounded-full h-[150px] w-[150px]"
             />
