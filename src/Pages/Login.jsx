@@ -5,17 +5,17 @@ import { useAuth } from "../Context/AuthProvider";
 
 function Login() {
   const [email, setEmail] = useState("");
-  const [passwort, setPasswort] = useState("");
+  const [password, setPassword] = useState("");
   const navigate = useNavigate();
   const { login } = useAuth();
 
   const handleLogin = () => {
-    if (!email || !passwort) {
+    if (!email || !password) {
       toast.error("Bitte E-Mail und Passwort eingeben");
       return;
     }
 
-    const success = login({ email, passwort });
+    const success = login({ email, password });
 
     if (success) {
       toast.success("Login erfolgreich!");
@@ -41,8 +41,8 @@ function Login() {
           type="password"
           placeholder="Passwort"
           className="input"
-          value={passwort}
-          onChange={(e) => setPasswort(e.target.value)}
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
         />
         <button
           onClick={handleLogin}

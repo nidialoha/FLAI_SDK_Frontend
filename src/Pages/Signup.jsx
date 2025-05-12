@@ -6,14 +6,14 @@ import { useAuth } from "../Context/AuthProvider";
 
 function Signup() {
   const navigate = useNavigate();
-  const { setUser, login } = useAuth();
+  const { setUser, login, signup, user } = useAuth();
   const [error, setError] = useState("");
 
   const [signupData, setSignUpData] = useState({
-    image: "",
+    imageURL: "",
     name: "",
     email: "",
-    passwort: "",
+    password: "",
   });
 
   const [previewImage, setPreviewImage] = useState("");
@@ -49,7 +49,7 @@ function Signup() {
       );
       const data = await res.json();
       if (data.secure_url) {
-        setSignUpData((prev) => ({ ...prev, image: data.secure_url }));
+        setSignUpData((prev) => ({ ...prev, imageURL: data.secure_url }));
         toast.success("Bild erfolgreich hochgeladen!");
       } else {
         throw new Error("Keine URL erhalten");
@@ -61,56 +61,37 @@ function Signup() {
   };
 
   const handleSignup = async (e) => {
-    e.preventDefault();
-    const { name, email, passwort, image } = signupData;
-    if (!name.trim() || !email.trim() || !passwort.trim() || !image) {
-      toast.error("Bitte alle Felder inkl. Bild ausfüllen.");
-      return;
-    }
-
-    if (!email.includes("@")) {
-      toast.error("Ungültige E-Mail-Adresse.");
-      return;
-    }
-
-    if (passwort.length < 6) {
-      toast.error("Passwort muss mindestens 6 Zeichen haben.");
-      return;
-    }
-
-    const newUser = { name, email, passwort, image };
-    localStorage.setItem("user", JSON.stringify(newUser));
-    localStorage.setItem("authToken", "dummy-token");
-
-    toast.success("User erfolgreich registriert. Bitte einloggen!");
-    // await fetchSignup(); // WARTE AUF YANNIS BACKEND
-
-    // ⏩ Weiter zur Login-Seite
-    navigate("/login");
-  };
-
-  const fetchSignup = async () => {
     try {
-      const res = await fetch("", {
-        //BACKEND VON YANNIS
-        method: "POST",
-        body: JSON.stringify({
-          image: signupData.image,
-          name: signupData.name,
-          email: signupData.email,
-          passwort: signupData.passwort,
-        }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      if (!res.ok) throw Error("Bad request");
-      const data = await res.json();
-      console.log(data);
-      localStorage.setItem("token", data.token);
+      e.preventDefault();
+      const { name, email, password, imageURL } = signupData;
+      if (!name.trim() || !email.trim() || !password.trim() || !imageURL) {
+        toast.error("Bitte alle Felder inkl. Bild ausfüllen.");
+        return;
+      }
 
-      setUser(data.user);
-      await login();
+      if (!email.includes("@")) {
+        toast.error("Ungültige E-Mail-Adresse.");
+        return;
+      }
+
+      if (password.length < 6) {
+        toast.error("Passwort muss mindestens 6 Zeichen haben.");
+        return;
+      }
+
+      const newUser = {
+        name,
+        email,
+        password,
+        imageURL,
+        latestLogin: Date.now(),
+      };
+      await signup(newUser);
+
+      toast.success("User erfolgreich registriert. Bitte einloggen!");
+
+      // ⏩ Weiter zur Login-Seite
+      navigate("/login");
     } catch (error) {
       console.log(error);
     }
@@ -165,11 +146,11 @@ function Signup() {
           <p className="font-semibold text-white">Passwort</p>
           <input
             type="password"
-            name="passwort"
+            name="password"
             placeholder="Passwort"
             className="input"
             onChange={handleChange}
-            value={signupData.passwort}
+            value={signupData.password}
           />
         </div>
         <button
