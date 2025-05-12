@@ -1,9 +1,9 @@
-import { useAuth0 } from "@auth0/auth0-react";
+import { useAuth } from "../Context/AuthProvider";
 import { FaArrowRight } from "react-icons/fa";
 import { NavLink } from "react-router";
 
 function Dashboard() {
-  const { user, isAuthenticated, isLoading } = useAuth0();
+  const { user, isAuthenticated, isLoading } = useAuth();
   if (isLoading) {
     return <div>Loading ...</div>;
   }
@@ -11,7 +11,7 @@ function Dashboard() {
   return (
     isAuthenticated && (
       <>
-        <h1 className="mt-5 font-black ml-5">Hallo, {user.given_name}!</h1>
+        <h1 className="mt-5 font-black ml-5">Hallo, {user.name}!</h1>
         <div className="flex text-white">
           <NavLink
             to="/meineblogs"

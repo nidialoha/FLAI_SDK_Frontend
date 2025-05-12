@@ -1,25 +1,28 @@
 import React from "react";
-import { useAuth0 } from "@auth0/auth0-react";
 import { FaArrowRight } from "react-icons/fa";
 import { GoPlusCircle } from "react-icons/go";
-import { NavLink, useLocation } from "react-router";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../Context/AuthProvider";
 
 function NavBarRechts() {
-  const { loginWithRedirect } = useAuth0();
-  const { user, isAuthenticated, isLoading, logout } = useAuth0();
   const location = useLocation();
+  const navigate = useNavigate();
   const isOnDashboard = location.pathname === "/dashboard";
 
-  if (isLoading) {
-    return <div>Loading ...</div>;
-  }
+  const { user, isAuthenticated, logout } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/forum");
+  };
+
   return (
     <div className="flex flex-col">
       <div className="bg-linear-to-r from-purple-500 to-indigo-500 p-6 mr-6 flex flex-col text-center rounded-lg items-center">
         {isAuthenticated ? (
           <>
             <img
-              src={user.picture}
+              src={user.image}
               alt={user.name}
               className="rounded-full h-[150px] w-[150px]"
             />
@@ -31,11 +34,7 @@ function NavBarRechts() {
                     <div className="flex gap-3">
                       <button
                         className=" text-white text-xs underline cursor-pointer"
-                        onClick={() =>
-                          logout({
-                            logoutParams: { returnTo: window.location.origin },
-                          })
-                        }
+                        onClick={handleLogout}
                       >
                         Logout
                       </button>
@@ -69,15 +68,15 @@ function NavBarRechts() {
           <>
             <h2 className="text-white font-bold">Willkommen!</h2>
             <p className="text-white text-sm mb-3">
-              Melde dich an oder registriere dich.
+              Registriere dich oder melde dich an.
             </p>
             <div className="flex gap-3 items-center mt-2">
-              <button
+              <NavLink
+                to="/signup"
                 className="text-white text-xs underline cursor-pointer"
-                onClick={() => loginWithRedirect()}
               >
                 Jetzt anmelden
-              </button>
+              </NavLink>
               <FaArrowRight className="text-white" />
             </div>
           </>

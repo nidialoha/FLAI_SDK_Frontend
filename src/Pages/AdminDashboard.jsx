@@ -1,9 +1,9 @@
-import { useAuth0 } from "@auth0/auth0-react";
+import { useAuth } from "../Context/AuthProvider";
 import { FaArrowRight } from "react-icons/fa";
 import { NavLink } from "react-router";
 
 function AdminDashboard() {
-  const { user, isAuthenticated, isLoading } = useAuth0();
+  const { user, isAuthenticated, isLoading } = useAuth();
   if (isLoading) {
     return <div>Loading ...</div>;
   }
@@ -11,9 +11,7 @@ function AdminDashboard() {
   return (
     isAuthenticated && (
       <>
-        <h1 className="mt-5 font-black ml-5">
-          Hallo Admin, {user.given_name}!
-        </h1>
+        <h1 className="mt-5 font-black ml-5">Hallo Admin, {user.name}!</h1>
         <div className="flex text-white">
           <div className="bg-linear-to-r from-red-500 to-red-900 p-6 ml-4 mt-4 flex flex-col text-center w-1/2 rounded-lg items-center">
             <h2 className="text-3xl">42.792</h2>
