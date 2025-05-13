@@ -1,7 +1,8 @@
 import { AiOutlineLike } from "react-icons/ai";
 import { AiOutlineDislike } from "react-icons/ai";
 import { TfiControlRecord } from "react-icons/tfi";
-import { useAuth0 } from "@auth0/auth0-react";
+import { useAuth } from "../Context/AuthProvider";
+import KommentarKarte from "./KommentarKarte";
 
 function AntwortKarte({
   nutzerNameKommentar,
@@ -12,8 +13,9 @@ function AntwortKarte({
   dislikeAntwort,
   userReaction,
   onReact,
+  bild,
 }) {
-  const { user, isAuthenticated } = useAuth0();
+  const { isAuthenticated } = useAuth();
   const stripHtml = (html) => {
     const tmp = document.createElement("div");
     tmp.innerHTML = html;
@@ -28,8 +30,8 @@ function AntwortKarte({
           <div className="flex gap-6 pb-5 pt-5 ">
             {isAuthenticated && (
               <img
-                src={user.picture}
-                alt={user.name}
+                src={bild}
+                alt={nutzerNameKommentar}
                 className="rounded-full ml-5 w-14 h-14"
               />
             )}
@@ -87,9 +89,15 @@ function AntwortKarte({
           </button> */}
           <div className="ml-9">
             {kommentarAntwort.map((kommentarAntwort, idx) => (
-              <li key={idx} className="mt-2 text-xs">
-                {stripHtml(kommentarAntwort)}
-              </li>
+              <KommentarKarte
+                key={idx}
+                inhalt={kommentarAntwort.content}
+                profilbild={kommentarAntwort.image}
+                name={kommentarAntwort.userName}
+              />
+              // <li key={idx} className="mt-2 text-xs">
+              //   {stripHtml(kommentarAntwort)}
+              // </li>
             ))}
           </div>
         </div>
