@@ -1,15 +1,18 @@
 import { useState, useEffect } from "react";
 import ReactQuill from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { FaArrowLeft } from "react-icons/fa";
 import DetailForumKarte from "../Components/DetailForumKarte";
 import KommentarKarte from "../Components/KommentarKarte";
 import AntwortKarte from "../Components/AntwortKarte";
-import { useAuth0 } from "@auth0/auth0-react";
+import { useAuth } from "../Context/AuthProvider";
+
 
 function DetailForum() {
-  const { user } = useAuth0();
+  const {id} = useParams();
+  const { user } = useAuth();
+  const [generalObject, setGeneralObject] = useState({mainPost:{tags:[]}});
   const [valueAntwort, setValueAntwort] = useState("");
   const [valueKommentar, setValueKommentar] = useState("");
   const [kommentare, setKommentare] = useState([]);
@@ -19,6 +22,31 @@ function DetailForum() {
   const [kommentarWerte, setKommentarWerte] = useState({});
 
   const navigate = useNavigate();
+
+useEffect(() => {
+  const fetchGeneralObject = async ()=>{
+try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/forum/${id}`, {
+        method: "GET",        
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      
+      if(!response.ok) throw new Error();
+      const res = await response.json();
+      console.log(res);
+      setGeneralObject({...res});
+    } catch (error) {
+      console.log(error);
+    }
+  }
+    
+    fetchGeneralObject();
+  }, []);
+  //const generalObject = {main:{...postObject, comments: []}, answers:[{...answerObject, commments:[]}]};
+
 
   // Quill Module
   const modules = {
@@ -66,26 +94,7 @@ function DetailForum() {
     },
   ];
 
-  useEffect(() => {
-    // Beispielantwort
-    const fetchedAntwort = [
-      {
-        id: 1,
-        inhalt: "Das ist eine Beispielantwort",
-        nutzername: "Anna Beispiel",
-        profilbild: "https://via.placeholder.com/56",
-        badges: 5,
-        likeAntwort: 6,
-        dislikeAntwort: 2,
-        kommentarAntwort: [
-          "Anna kommentiert: Kommentar 1 zur Antwort",
-          "Jackson kommentiert: Kommentar 2 zur Antwort",
-        ],
-        userReaction: null,
-      },
-    ];
-    setAntworten(fetchedAntwort);
-  }, []);
+  
 
   const handleAntwortAbschicken = () => {
     if (!valueAntwort.trim()) return;
@@ -157,19 +166,30 @@ function DetailForum() {
       </button>
 
       <div className="bg-white pb-2 rounded-lg ml-5 mt-5">
-        {detailForum.map((forumEintrag) => (
-          <DetailForumKarte key={forumEintrag.id} {...forumEintrag} />
-        ))}
+        {
+          <DetailForumKarte key={generalObject.mainPost.id} 
+          title={generalObject.mainPost.title} 
+          nutzerName={generalObject.mainPost.userName} 
+          text={generalObject.mainPost.content} 
+          tags={generalObject.mainPost.tags} 
+          views={generalObject.mainPost.viewCount}
+          badges={0}
+          time={(Math.floor((Date.now()-Date.parse(generalObject.mainPost.createdAt))/1000)>60 ? 
+        (Math.floor((Date.now()-Date.parse(generalObject.mainPost.createdAt))/1000/60)>60? (Math.floor((Date.now()-Date.parse(generalObject.mainPost.createdAt))/1000/60/60)>24?`${Math.floor((Date.now()-Date.parse(generalObject.mainPost.createdAt))/1000/60/60/24)} Tage`:`${Math.floor((Date.now()-Date.parse(generalObject.mainPost.createdAt))/1000/60/60)} Std.`):`${Math.floor((Date.now()-Date.parse(generalObject.mainPost.createdAt))/1000/60)} Min.`)
+        : `${Math.floor((Date.now()-Date.parse(generalObject.mainPost.createdAt))/1000)} Sek.`)}
+        likes={generalObject.mainPost.numberOfLikes}
+        dislikes={generalObject.mainPost.numberOfDislikes} />
+        }
 
         {/* Kommentar zur Frage */}
-        <div className="bg-slate-100 h-[120px] rounded-lg overflow-hidden m-5">
-          <ReactQuill
-            theme="snow"
-            value={valueKommentar}
-            modules={modulesKommentar}
-            formats={formats}
-            onChange={setValueKommentar}
-            className="quill-kommentar-antwort"
+        <div className="w-full px-5">
+          <input
+            type="text"
+            
+            
+            
+            onChange={(e)=>{setValueKommentar(e.target.value)}}
+            className="bg-slate-100 rounded-lg overflow-hidden w-full mb-2"
           />
         </div>
         <button

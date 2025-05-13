@@ -5,14 +5,14 @@ import { NavLink } from "react-router-dom";
 import { MdQuestionAnswer } from "react-icons/md";
 import Markdown from "react-markdown";
 
-function ForumKarte({ title, text, tags, likes, views, time, answers }) {
+function ForumKarte({ title, text, tags, likes, views, time, answers, id }) {
   const stripHtml = (html) => {
     const tmp = document.createElement("div");
     tmp.innerHTML = html;
     return tmp.textContent || tmp.innerText || "";
   };
   return (
-    <NavLink to="/detailforum">
+    <NavLink to={`/detailforum/${id}`}>
       <div className="bg-white mt-4 shadow-md p-6 ml-5 rounded-lg">
         <div className="grid grid-cols-5 gap-10">
           <div className="flex flex-col items-center border-r-1">
