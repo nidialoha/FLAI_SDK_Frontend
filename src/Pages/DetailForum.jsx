@@ -8,11 +8,14 @@ import KommentarKarte from "../Components/KommentarKarte";
 import AntwortKarte from "../Components/AntwortKarte";
 import { useAuth } from "../Context/AuthProvider";
 
-
 function DetailForum() {
-  const {id} = useParams();
+  const { id } = useParams();
   const { user } = useAuth();
-  const [generalObject, setGeneralObject] = useState({mainPost:{tags:[]}});
+  const [generalObject, setGeneralObject] = useState({
+    mainPost: { tags: [], comments: [] },
+    answers: [{ comments: [] }],
+  });
+  const [readyForAI, setReadyForAI] = useState(false);
   const [valueAntwort, setValueAntwort] = useState("");
   const [valueKommentar, setValueKommentar] = useState("");
   const [kommentare, setKommentare] = useState([]);
@@ -23,30 +26,35 @@ function DetailForum() {
 
   const navigate = useNavigate();
 
-useEffect(() => {
-  const fetchGeneralObject = async ()=>{
-try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/forum/${id}`, {
-        method: "GET",        
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      
-      if(!response.ok) throw new Error();
-      const res = await response.json();
-      console.log(res);
-      setGeneralObject({...res});
-    } catch (error) {
-      console.log(error);
-    }
-  }
-    
+  useEffect(() => {
+    const fetchGeneralObject = async () => {
+      try {
+        const response = await fetch(
+          `${import.meta.env.VITE_API_URL}/forum/${id}`,
+          {
+            method: "GET",
+            credentials: "include",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (!response.ok) throw new Error();
+        const res = await response.json();
+        console.log(res);
+        let dateOfPost = Date.parse(res.mainPost.createdAt);
+        let difference = Date.now() - dateOfPost;
+        if (difference > 1000 * 60 * 120) setReadyForAI(true);
+        setGeneralObject({ ...res });
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
     fetchGeneralObject();
   }, []);
   //const generalObject = {main:{...postObject, comments: []}, answers:[{...answerObject, commments:[]}]};
-
 
   // Quill Module
   const modules = {
@@ -93,8 +101,6 @@ try {
       tags: ["CSS", "Frontend"],
     },
   ];
-
-  
 
   const handleAntwortAbschicken = () => {
     if (!valueAntwort.trim()) return;
@@ -155,6 +161,131 @@ try {
     );
   };
 
+  const handleCommentSubmit = async (e) => {
+    try {
+      e.preventDefault();
+      if (!valueKommentar.trim()) return;
+      let refId = e.target.dataset.refid;
+      console.log(refId);
+      const comment = {
+        type: "comment",
+        content: valueKommentar,
+        userId: user.id,
+        refId,
+      };
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/forum/`, {
+        method: "POST",
+        body: JSON.stringify(comment),
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (!response.ok) throw new Error();
+      const res = await response.json();
+      console.log(res);
+      if (generalObject.mainPost.id == refId) {
+        let mainPostComments = [...generalObject.mainPost.comments];
+        mainPostComments.push({ ...res.createdPost });
+
+        setGeneralObject({
+          mainPost: {
+            ...generalObject.mainPost,
+            comments: [...mainPostComments],
+          },
+          answers: [...generalObject.answers],
+        });
+      } else {
+        let answersArray = [...generalObject.answers];
+        let commentsArrayToUpdate = answersArray.find(
+          (a) => a.id == refId
+        ).comments;
+        commentsArrayToUpdate.push({ ...res.createdPost });
+        let updatedAnswers = answersArray.map((el) =>
+          el.id == refId
+            ? { ...el, comments: commentsArrayToUpdate }
+            : { ...el }
+        );
+        setGeneralObject({
+          mainPost: { ...generalObject.mainPost },
+          answers: [...updatedAnswers],
+        });
+      }
+      setValueKommentar("");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleAnswerSubmit = async (e) => {
+    try {
+      e.preventDefault();
+      if (!valueAntwort.trim()) return;
+      let refId = e.target.dataset.refid;
+      console.log(refId);
+      const answer = {
+        type: "answer",
+        content: valueAntwort,
+        userId: user.id,
+        refId,
+      };
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/forum/`, {
+        method: "POST",
+        body: JSON.stringify(answer),
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (!response.ok) throw new Error();
+      const res = await response.json();
+      console.log(res);
+      let answersArray = [...generalObject.answers];
+      answersArray.push({ ...res.createdPost, comments: [] });
+      setValueAntwort("");
+      setGeneralObject({
+        mainPost: {
+          ...generalObject.mainPost,
+        },
+        answers: [...answersArray],
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const generateAIAnswer = async (e) => {
+    try {
+      e.preventDefault();
+      let refId = e.target.dataset.refid;
+      let requestObject = { message: generalObject.mainPost.content };
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/forum/ai/${refId}`,
+        {
+          method: "POST",
+          body: JSON.stringify(requestObject),
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      if (!response.ok) throw new Error();
+      const res = await response.json();
+      console.log(res);
+      let answersArray = [...generalObject.answers];
+      answersArray.push({ ...res.aiResponse, comments: [] });
+      setGeneralObject({
+        mainPost: {
+          ...generalObject.mainPost,
+        },
+        answers: [...answersArray],
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <>
       <button
@@ -167,65 +298,110 @@ try {
 
       <div className="bg-white pb-2 rounded-lg ml-5 mt-5">
         {
-          <DetailForumKarte key={generalObject.mainPost.id} 
-          title={generalObject.mainPost.title} 
-          nutzerName={generalObject.mainPost.userName} 
-          text={generalObject.mainPost.content} 
-          tags={generalObject.mainPost.tags} 
-          views={generalObject.mainPost.viewCount}
-          badges={0}
-          time={(Math.floor((Date.now()-Date.parse(generalObject.mainPost.createdAt))/1000)>60 ? 
-        (Math.floor((Date.now()-Date.parse(generalObject.mainPost.createdAt))/1000/60)>60? (Math.floor((Date.now()-Date.parse(generalObject.mainPost.createdAt))/1000/60/60)>24?`${Math.floor((Date.now()-Date.parse(generalObject.mainPost.createdAt))/1000/60/60/24)} Tage`:`${Math.floor((Date.now()-Date.parse(generalObject.mainPost.createdAt))/1000/60/60)} Std.`):`${Math.floor((Date.now()-Date.parse(generalObject.mainPost.createdAt))/1000/60)} Min.`)
-        : `${Math.floor((Date.now()-Date.parse(generalObject.mainPost.createdAt))/1000)} Sek.`)}
-        likes={generalObject.mainPost.numberOfLikes}
-        dislikes={generalObject.mainPost.numberOfDislikes} />
+          <DetailForumKarte
+            key={generalObject.mainPost.id}
+            title={generalObject.mainPost.title}
+            nutzerName={generalObject.mainPost.userName}
+            text={generalObject.mainPost.content}
+            tags={generalObject.mainPost.tags}
+            views={generalObject.mainPost.viewCount}
+            badges={0}
+            time={
+              Math.floor(
+                (Date.now() - Date.parse(generalObject.mainPost.createdAt)) /
+                  1000
+              ) > 60
+                ? Math.floor(
+                    (Date.now() -
+                      Date.parse(generalObject.mainPost.createdAt)) /
+                      1000 /
+                      60
+                  ) > 60
+                  ? Math.floor(
+                      (Date.now() -
+                        Date.parse(generalObject.mainPost.createdAt)) /
+                        1000 /
+                        60 /
+                        60
+                    ) > 24
+                    ? `${Math.floor(
+                        (Date.now() -
+                          Date.parse(generalObject.mainPost.createdAt)) /
+                          1000 /
+                          60 /
+                          60 /
+                          24
+                      )} Tag(e)`
+                    : `${Math.floor(
+                        (Date.now() -
+                          Date.parse(generalObject.mainPost.createdAt)) /
+                          1000 /
+                          60 /
+                          60
+                      )} Std.`
+                  : `${Math.floor(
+                      (Date.now() -
+                        Date.parse(generalObject.mainPost.createdAt)) /
+                        1000 /
+                        60
+                    )} Min.`
+                : `${Math.floor(
+                    (Date.now() -
+                      Date.parse(generalObject.mainPost.createdAt)) /
+                      1000
+                  )} Sek.`
+            }
+            likes={generalObject.mainPost.numberOfLikes}
+            dislikes={generalObject.mainPost.numberOfDislikes}
+          />
         }
+        {readyForAI && generalObject.mainPost.userId == user.id && (
+          <button
+            onClick={generateAIAnswer}
+            data-refid={generalObject.mainPost.id}
+            className="mt-3 text-xs rounded-lg bg-[#FF658A] text-white p-2 cursor-pointer w-full"
+          >
+            Frag Gemini
+          </button>
+        )}
 
         {/* Kommentar zur Frage */}
         <div className="w-full px-5">
           <input
             type="text"
-            
-            
-            
-            onChange={(e)=>{setValueKommentar(e.target.value)}}
+            value={valueKommentar}
+            onChange={(e) => {
+              setValueKommentar(e.target.value);
+            }}
             className="bg-slate-100 rounded-lg overflow-hidden w-full mb-2"
           />
         </div>
         <button
           className="mb-2 text-xs rounded-lg bg-slate-500 text-white p-2 cursor-pointer ml-5"
-          onClick={() => {
-            if (!valueKommentar.trim()) return;
-            setKommentare((prev) => [
-              ...prev,
-              {
-                inhalt: `${
-                  user?.name || "Anonym"
-                } kommentiert: ${valueKommentar}`,
-                profilbild: user?.picture || "https://via.placeholder.com/40",
-              },
-            ]);
-            setValueKommentar("");
-          }}
+          data-refid={generalObject.mainPost.id}
+          onClick={handleCommentSubmit}
         >
           Kommentar senden
         </button>
       </div>
 
       {/* Kommentare zur Frage */}
-      {(alleKommentareAnzeigen ? kommentare : kommentare.slice(0, 5)).map(
-        (kommentar, index) => (
-          <KommentarKarte key={index} {...kommentar} />
-        )
-      )}
-      {!alleKommentareAnzeigen && kommentare.length > 5 && (
+      {generalObject.mainPost.comments.map((kommentar, index) => (
+        <KommentarKarte
+          key={index}
+          inhalt={kommentar.content}
+          profilbild={kommentar.image}
+          name={kommentar.userName}
+        />
+      ))}
+      {/* {!alleKommentareAnzeigen && kommentare.length > 5 && (
         <button
           className="underline text-xs mt-3 mb-5 cursor-pointer ml-5"
           onClick={() => setAlleKommentareAnzeigen(true)}
         >
           Mehr Kommentare anzeigen
         </button>
-      )}
+      )} */}
 
       {/* Antworten */}
       <h2 className="font-bold ml-5 mb-2 mt-4">Antwort geben</h2>
@@ -241,7 +417,8 @@ try {
       </div>
       <div className="ml-5">
         <button
-          onClick={handleAntwortAbschicken}
+          onClick={handleAnswerSubmit}
+          data-refid={generalObject.mainPost.id}
           className="mt-3 text-xs rounded-lg bg-[#FF658A] text-white p-2 cursor-pointer w-full"
         >
           Antwort senden
@@ -249,17 +426,18 @@ try {
       </div>
 
       <h2 className="font-bold ml-5 mt-5">Antworten</h2>
-      {antworten.map((eintrag) => (
+      {generalObject.answers.map((eintrag) => (
         <div key={eintrag.id}>
           <AntwortKarte
-            nutzerNameKommentar={eintrag.nutzername}
-            nutzerBadges={eintrag.badges}
-            kommentarPost={eintrag.inhalt}
-            kommentarAntwort={eintrag.kommentarAntwort}
-            likeAntwort={eintrag.likeAntwort}
-            dislikeAntwort={eintrag.dislikeAntwort}
-            userReaction={eintrag.userReaction}
-            onReact={(type) => toggleReaction(eintrag.id, type)}
+            nutzerNameKommentar={eintrag.userName}
+            nutzerBadges={0}
+            kommentarPost={eintrag.content}
+            kommentarAntwort={eintrag.comments}
+            likeAntwort={eintrag.numberOfLikes}
+            dislikeAntwort={eintrag.numberOfDislikes}
+            userReaction={""}
+            onReact={""}
+            bild={eintrag.image}
           />
 
           {/* Kommentar-Editor für Antwort */}
@@ -275,47 +453,15 @@ try {
           </button>
 
           {aktivesKommentarFeld === eintrag.id && (
-            <div className="ml-5 mt-2 mb-4 bg-slate-100 p-2 rounded-lg">
-              <ReactQuill
-                className="quill-kommentar-antwort"
-                theme="snow"
-                value={kommentarWerte[eintrag.id] || ""}
-                onChange={(content) =>
-                  setKommentarWerte((prev) => ({
-                    ...prev,
-                    [eintrag.id]: content,
-                  }))
-                }
-                modules={modulesKommentar}
-                formats={formats}
+            <div className="w-full flex-col mt-2 mb-4  px-5 ">
+              <input
+                className="bg-slate-100 rounded-lg"
+                value={valueKommentar}
+                onChange={(e) => setValueKommentar(e.target.value)}
               />
               <button
-                onClick={() => {
-                  const neuerKommentar = `${
-                    user?.name || "Anonym"
-                  } kommentiert: ${kommentarWerte[eintrag.id]}`;
-                  if (!kommentarWerte[eintrag.id]) return;
-
-                  setAntworten((prevAntwort) =>
-                    prevAntwort.map((antwort) =>
-                      antwort.id === eintrag.id
-                        ? {
-                            ...antwort,
-                            kommentarAntwort: [
-                              ...antwort.kommentarAntwort,
-                              neuerKommentar,
-                            ],
-                          }
-                        : antwort
-                    )
-                  );
-
-                  setKommentarWerte((prev) => ({
-                    ...prev,
-                    [eintrag.id]: "",
-                  }));
-                  setAktivesKommentarFeld(null);
-                }}
+                data-refid={eintrag.id}
+                onClick={handleCommentSubmit}
                 className="mt-2 text-xs rounded-lg bg-slate-500 text-white p-2 cursor-pointer"
               >
                 Kommentar senden

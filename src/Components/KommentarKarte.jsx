@@ -1,5 +1,5 @@
 import ReactMarkdown from "react-markdown";
-function KommentarKarte({ inhalt, profilbild }) {
+function KommentarKarte({ inhalt, profilbild, name }) {
   const stripHtml = (html) => {
     const tmp = document.createElement("div");
     tmp.innerHTML = html;
@@ -14,7 +14,8 @@ function KommentarKarte({ inhalt, profilbild }) {
           className="w-8 h-8 rounded-full"
         />
       )}
-      <li className="text-xs list-none">{stripHtml(inhalt)}</li>
+      <span>{name}</span>
+      <p className="text-xs list-none">{stripHtml(inhalt)}</p>
       {/* <ReactMarkdown>{inhalt}</ReactMarkdown> */}
     </div>
   );

@@ -4,6 +4,9 @@ import { IoTimeOutline } from "react-icons/io5";
 import { AiOutlineLike } from "react-icons/ai";
 import { AiOutlineDislike } from "react-icons/ai";
 import { TfiControlRecord } from "react-icons/tfi";
+import rehypeRaw from "rehype-raw";
+import Markdown from "react-markdown";
+
 function DetailForumKarte({
   title,
   nutzerName,
@@ -15,12 +18,12 @@ function DetailForumKarte({
   text,
   tags,
 }) {
-
   const stripHtml = (html) => {
     const tmp = document.createElement("div");
     tmp.innerHTML = html;
     return tmp.textContent || tmp.innerText || "";
   };
+
   return (
     <>
       <div className="">
@@ -69,7 +72,8 @@ function DetailForumKarte({
         </div>
 
         <div className="m-5">
-          <p>{stripHtml(text)}</p>
+          <Markdown children={text} rehypePlugins={rehypeRaw}></Markdown>
+          {/* <p>{stripHtml(text)}</p> */}
           <div className="flex gap-2 flex-wrap">
             {tags.map((tag, idx) => (
               <p key={idx} className="bg-slate-300 px-3 rounded-lg mt-6">

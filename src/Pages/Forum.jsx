@@ -9,46 +9,72 @@ import ReactMarkdown from "react-markdown";
 import { useAuth } from "../Context/AuthProvider";
 
 function Forum() {
-  
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState("");
   const [titel, setTitel] = useState("");
   const [isPrivate, setIsPrivate] = useState(false);
   const [selectedTags, setSelectedTags] = useState([]);
   const [customTag, setCustomTag] = useState("");
-  const {user} = useAuth();
+  const { user } = useAuth();
 
   const [forumBeitraege, setForumBeitraege] = useState([]);
 
-  useEffect(()=>{console.log(forumBeitraege)}, [forumBeitraege]);
+  useEffect(() => {
+    console.log(forumBeitraege);
+  }, [forumBeitraege]);
 
-  useEffect( ()=>{
-    const fetchQuestions = async ()=>{
-    try {
-      console.log("before fetch questions");
-      let questionArray = [];
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/forum?type=question`, {
-        method: "GET",        
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      
-      if(!response.ok) throw new Error();
-      const res = await response.json();
-      console.log("Daten: "+res.posts);
-      questionArray = res.posts;
-      const beitraege = questionArray.map((e)=>({...e,
-        time:(Math.floor((Date.now()-Date.parse(e.createdAt))/1000)>60 ? 
-        (Math.floor((Date.now()-Date.parse(e.createdAt))/1000/60)>60? (Math.floor((Date.now()-Date.parse(e.createdAt))/1000/60/60)>24?`${Math.floor((Date.now()-Date.parse(e.createdAt))/1000/60/60/24)} Tage`:`${Math.floor((Date.now()-Date.parse(e.createdAt))/1000/60/60)} Std.`):`${Math.floor((Date.now()-Date.parse(e.createdAt))/1000/60)} Min.`)
-        : `${Math.floor((Date.now()-Date.parse(e.createdAt))/1000)} Sek.`)}));
-      //beitraege.sort((a, b) => a.createdAt - b.createdAt);
-      setForumBeitraege(beitraege);
-    } catch (error) {
-      console.log(error);
-    }
-    }
+  useEffect(() => {
+    const fetchQuestions = async () => {
+      try {
+        console.log("before fetch questions");
+        let questionArray = [];
+        const response = await fetch(
+          `${import.meta.env.VITE_API_URL}/forum?type=question`,
+          {
+            method: "GET",
+            credentials: "include",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (!response.ok) throw new Error();
+        const res = await response.json();
+        console.log("Daten: " + res.posts);
+        questionArray = res.posts;
+        const beitraege = questionArray.map((e) => ({
+          ...e,
+          time:
+            Math.floor((Date.now() - Date.parse(e.createdAt)) / 1000) > 60
+              ? Math.floor((Date.now() - Date.parse(e.createdAt)) / 1000 / 60) >
+                60
+                ? Math.floor(
+                    (Date.now() - Date.parse(e.createdAt)) / 1000 / 60 / 60
+                  ) > 24
+                  ? `${Math.floor(
+                      (Date.now() - Date.parse(e.createdAt)) /
+                        1000 /
+                        60 /
+                        60 /
+                        24
+                    )} Tage`
+                  : `${Math.floor(
+                      (Date.now() - Date.parse(e.createdAt)) / 1000 / 60 / 60
+                    )} Std.`
+                : `${Math.floor(
+                    (Date.now() - Date.parse(e.createdAt)) / 1000 / 60
+                  )} Min.`
+              : `${Math.floor(
+                  (Date.now() - Date.parse(e.createdAt)) / 1000
+                )} Sek.`,
+        }));
+        //beitraege.sort((a, b) => a.createdAt - b.createdAt);
+        setForumBeitraege(beitraege);
+      } catch (error) {
+        console.log(error);
+      }
+    };
     fetchQuestions();
   }, []);
 
@@ -72,21 +98,18 @@ function Forum() {
     }
   };
 
-  
-
   const handleCreateBeitrag = async () => {
-    
     try {
       let neuerBeitrag = {
-      title:titel,
-      content: value,
-      type: "question",
-      userId: user.id,
-      isPrivate,
-      tags:selectedTags
-    };
-    console.log("Before fetch")
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/forum`, {
+        title: titel,
+        content: value,
+        type: "question",
+        userId: user.id,
+        isPrivate,
+        tags: selectedTags,
+      };
+      console.log("Before fetch");
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/forum`, {
         method: "POST",
         body: JSON.stringify(neuerBeitrag),
         credentials: "include",
@@ -94,26 +117,32 @@ function Forum() {
           "Content-Type": "application/json",
         },
       });
-    
-      if(!response.ok) throw new Error();
+
+      if (!response.ok) throw new Error();
       console.log("After fetch");
       const res = await response.json();
       neuerBeitrag = res.createdPost;
-      neuerBeitrag.time = (Math.floor((Date.now()-Date.parse(neuerBeitrag.createdAt))/1000)>60 ? 
-        `${Math.floor((Date.now()-Date.parse(neuerBeitrag.createdAt))/1000/60)} Min.`: `${Math.floor((Date.now()-Date.parse(neuerBeitrag.createdAt))/1000)} Sek.`)
-    setForumBeitraege([neuerBeitrag, ...forumBeitraege]);
+      neuerBeitrag.time =
+        Math.floor((Date.now() - Date.parse(neuerBeitrag.createdAt)) / 1000) >
+        60
+          ? `${Math.floor(
+              (Date.now() - Date.parse(neuerBeitrag.createdAt)) / 1000 / 60
+            )} Min.`
+          : `${Math.floor(
+              (Date.now() - Date.parse(neuerBeitrag.createdAt)) / 1000
+            )} Sek.`;
+      setForumBeitraege([neuerBeitrag, ...forumBeitraege]);
 
-    // Modal schließen & Felder zurücksetzen
-    setOpen(false);
-    setTitel("");
-    setValue("");
-    setSelectedTags([]);
-    setCustomTag("");
-    setIsPrivate(false);
+      // Modal schließen & Felder zurücksetzen
+      setOpen(false);
+      setTitel("");
+      setValue("");
+      setSelectedTags([]);
+      setCustomTag("");
+      setIsPrivate(false);
     } catch (error) {
       console.log(error);
     }
-    
   };
   // Custom ToolBar
   const modules = {
@@ -140,9 +169,9 @@ function Forum() {
     "code-block",
   ];
 
-  const handlePrivateChange = (e)=>{    
+  const handlePrivateChange = (e) => {
     setIsPrivate(e.target.checked);
-  }
+  };
 
   return (
     <>
@@ -179,7 +208,11 @@ function Forum() {
             onChange={(e) => setTitel(e.target.value)}
           />
           <h3>Privat?</h3>
-          <input type="checkbox" onClick={handlePrivateChange} className="checkbox" />
+          <input
+            type="checkbox"
+            onClick={handlePrivateChange}
+            className="checkbox"
+          />
           <h3>Schlagwörter</h3>
 
           {/* Anzeige der ausgewählten Tags */}
@@ -232,6 +265,7 @@ function Forum() {
           </div>
 
           <h3 className="mb-3">Inhalt</h3>
+
           <ReactQuill
             theme="snow"
             value={value}
@@ -240,6 +274,7 @@ function Forum() {
             onChange={setValue}
             className="quill-blog"
           />
+          <ReactQuill theme="snow" value={value} readOnly={true} />
         </div>
 
         <div className="ml-5">
@@ -255,7 +290,6 @@ function Forum() {
       {/* Beiträge anzeigen */}
 
       {forumBeitraege.map((eintrag) => (
-        
         <ForumKarte
           key={eintrag.id}
           title={eintrag.title}

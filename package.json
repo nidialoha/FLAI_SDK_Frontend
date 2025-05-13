@@ -17,6 +17,7 @@
     "axios": "^1.9.0",
     "cloudinary": "^2.6.1",
     "daisyui": "^5.0.28",
+    "dompurify": "^3.2.5",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-hot-toast": "^2.5.2",
@@ -24,6 +25,7 @@
     "react-markdown": "^10.1.0",
     "react-quill-new": "^3.4.6",
     "react-router-dom": "^7.5.3",
+    "rehype-raw": "^7.0.0",
     "tailwindcss": "^4.1.4"
   },
   "devDependencies": {
