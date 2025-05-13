@@ -3,7 +3,7 @@ import { FaArrowRight } from "react-icons/fa";
 import { GoPlusCircle } from "react-icons/go";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../Context/AuthProvider";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 function NavBarRechts() {
   const location = useLocation();

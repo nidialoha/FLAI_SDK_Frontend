@@ -2,30 +2,55 @@ import { CiFilter } from "react-icons/ci";
 import ReactQuill, { Quill } from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css";
 import { MdClose } from "react-icons/md";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ModalForum from "../Modal/ModalForum";
 import ForumKarte from "../Components/ForumKarte";
 import ReactMarkdown from "react-markdown";
+import { useAuth } from "../Context/AuthProvider";
 
 function Forum() {
+  
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState("");
   const [titel, setTitel] = useState("");
+  const [isPrivate, setIsPrivate] = useState(false);
   const [selectedTags, setSelectedTags] = useState([]);
   const [customTag, setCustomTag] = useState("");
+  const {user} = useAuth();
 
-  const [forumBeitraege, setForumBeitraege] = useState([
-    {
-      id: 1,
-      title: "Mein CSS funktioniert nicht!",
-      text: "The classic Latin passage that just never gets old...",
-      tags: ["test", "CSS"],
-      likes: 4,
-      views: 245,
-      time: "2 min.",
-      answers: 24,
-    },
-  ]);
+  const [forumBeitraege, setForumBeitraege] = useState([]);
+
+  useEffect(()=>{console.log(forumBeitraege)}, [forumBeitraege]);
+
+  useEffect( ()=>{
+    const fetchQuestions = async ()=>{
+    try {
+      console.log("before fetch questions");
+      let questionArray = [];
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/forum?type=question`, {
+        method: "GET",        
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      
+      if(!response.ok) throw new Error();
+      const res = await response.json();
+      console.log("Daten: "+res.posts);
+      questionArray = res.posts;
+      const beitraege = questionArray.map((e)=>({...e,
+        time:(Math.floor((Date.now()-Date.parse(e.createdAt))/1000)>60 ? 
+        (Math.floor((Date.now()-Date.parse(e.createdAt))/1000/60)>60? (Math.floor((Date.now()-Date.parse(e.createdAt))/1000/60/60)>24?`${Math.floor((Date.now()-Date.parse(e.createdAt))/1000/60/60/24)} Tage`:`${Math.floor((Date.now()-Date.parse(e.createdAt))/1000/60/60)} Std.`):`${Math.floor((Date.now()-Date.parse(e.createdAt))/1000/60)} Min.`)
+        : `${Math.floor((Date.now()-Date.parse(e.createdAt))/1000)} Sek.`)}));
+      //beitraege.sort((a, b) => a.createdAt - b.createdAt);
+      setForumBeitraege(beitraege);
+    } catch (error) {
+      console.log(error);
+    }
+    }
+    fetchQuestions();
+  }, []);
 
   const availableTags = ["CSS", "JS", "React"];
 
@@ -47,18 +72,35 @@ function Forum() {
     }
   };
 
-  const handleCreateBeitrag = () => {
-    const neuerBeitrag = {
-      id: forumBeitraege.length + 1,
-      title: titel,
-      text: value,
-      tags: selectedTags,
-      likes: 0,
-      views: 0,
-      time: "jetzt",
-      answers: 0,
-    };
+  
 
+  const handleCreateBeitrag = async () => {
+    
+    try {
+      let neuerBeitrag = {
+      title:titel,
+      content: value,
+      type: "question",
+      userId: user.id,
+      isPrivate,
+      tags:selectedTags
+    };
+    console.log("Before fetch")
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/forum`, {
+        method: "POST",
+        body: JSON.stringify(neuerBeitrag),
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+    
+      if(!response.ok) throw new Error();
+      console.log("After fetch");
+      const res = await response.json();
+      neuerBeitrag = res.createdPost;
+      neuerBeitrag.time = (Math.floor((Date.now()-Date.parse(neuerBeitrag.createdAt))/1000)>60 ? 
+        `${Math.floor((Date.now()-Date.parse(neuerBeitrag.createdAt))/1000/60)} Min.`: `${Math.floor((Date.now()-Date.parse(neuerBeitrag.createdAt))/1000)} Sek.`)
     setForumBeitraege([neuerBeitrag, ...forumBeitraege]);
 
     // Modal schließen & Felder zurücksetzen
@@ -67,6 +109,11 @@ function Forum() {
     setValue("");
     setSelectedTags([]);
     setCustomTag("");
+    setIsPrivate(false);
+    } catch (error) {
+      console.log(error);
+    }
+    
   };
   // Custom ToolBar
   const modules = {
@@ -92,6 +139,10 @@ function Forum() {
     "image",
     "code-block",
   ];
+
+  const handlePrivateChange = (e)=>{    
+    setIsPrivate(e.target.checked);
+  }
 
   return (
     <>
@@ -127,7 +178,8 @@ function Forum() {
             value={titel}
             onChange={(e) => setTitel(e.target.value)}
           />
-
+          <h3>Privat?</h3>
+          <input type="checkbox" onClick={handlePrivateChange} className="checkbox" />
           <h3>Schlagwörter</h3>
 
           {/* Anzeige der ausgewählten Tags */}
@@ -203,15 +255,17 @@ function Forum() {
       {/* Beiträge anzeigen */}
 
       {forumBeitraege.map((eintrag) => (
+        
         <ForumKarte
           key={eintrag.id}
           title={eintrag.title}
-          text={eintrag.text}
+          text={eintrag.content}
           tags={eintrag.tags}
-          likes={eintrag.likes}
-          views={eintrag.views}
+          likes={eintrag.numberOfLikes}
+          views={eintrag.viewCount}
           time={eintrag.time}
-          answers={eintrag.answers}
+          answers={eintrag.numberOfAnswers}
+          id={eintrag.id}
         />
       ))}
 
