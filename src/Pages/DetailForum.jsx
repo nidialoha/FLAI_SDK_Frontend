@@ -7,6 +7,7 @@ import DetailForumKarte from "../Components/DetailForumKarte";
 import KommentarKarte from "../Components/KommentarKarte";
 import AntwortKarte from "../Components/AntwortKarte";
 import { useAuth } from "../Context/AuthProvider";
+import { FaArrowRight } from "react-icons/fa";
 
 function DetailForum() {
   const { id } = useParams();
@@ -355,15 +356,6 @@ function DetailForum() {
             dislikes={generalObject.mainPost.numberOfDislikes}
           />
         }
-        {readyForAI && generalObject.mainPost.userId == user.id && (
-          <button
-            onClick={generateAIAnswer}
-            data-refid={generalObject.mainPost.id}
-            className="mt-3 text-xs rounded-lg bg-[#FF658A] text-white p-2 cursor-pointer w-full"
-          >
-            Frag Gemini
-          </button>
-        )}
 
         {/* Kommentar zur Frage */}
         <div className="w-full px-5">
@@ -373,7 +365,7 @@ function DetailForum() {
             onChange={(e) => {
               setValueKommentar(e.target.value);
             }}
-            className="bg-slate-100 rounded-lg overflow-hidden w-full mb-2"
+            className="bg-slate-100 rounded-lg overflow-hidden w-full mb-2 p-1.5"
           />
         </div>
         <button
@@ -383,17 +375,17 @@ function DetailForum() {
         >
           Kommentar senden
         </button>
+        {/* Kommentare zur Frage */}
+        {generalObject.mainPost.comments.map((kommentar, index) => (
+          <KommentarKarte
+            key={index}
+            inhalt={kommentar.content}
+            profilbild={kommentar.image}
+            name={kommentar.userName}
+          />
+        ))}
       </div>
 
-      {/* Kommentare zur Frage */}
-      {generalObject.mainPost.comments.map((kommentar, index) => (
-        <KommentarKarte
-          key={index}
-          inhalt={kommentar.content}
-          profilbild={kommentar.image}
-          name={kommentar.userName}
-        />
-      ))}
       {/* {!alleKommentareAnzeigen && kommentare.length > 5 && (
         <button
           className="underline text-xs mt-3 mb-5 cursor-pointer ml-5"
@@ -403,6 +395,15 @@ function DetailForum() {
         </button>
       )} */}
 
+      {readyForAI && generalObject.mainPost.userId == user.id && (
+        <button
+          onClick={generateAIAnswer}
+          data-refid={generalObject.mainPost.id}
+          className="mt-3 text-xs rounded-lg bg-[#FF658A] text-white p-2 cursor-pointer w-full"
+        >
+          Frag Gemini
+        </button>
+      )}
       {/* Antworten */}
       <h2 className="font-bold ml-5 mb-2 mt-4">Antwort geben</h2>
       <div className="bg-white h-[250px] rounded-lg ml-5 overflow-hidden">
@@ -442,20 +443,23 @@ function DetailForum() {
 
           {/* Kommentar-Editor für Antwort */}
           <button
-            className="underline text-xs italic ml-5 mt-2 cursor-pointer hover:font-bold"
+            className="underline text-xs italic ml-5 cursor-pointer hover:font-bold hover:text-[#FF658A]"
             onClick={() =>
               setAktivesKommentarFeld(
                 aktivesKommentarFeld === eintrag.id ? null : eintrag.id
               )
             }
           >
-            Kommentieren
+            <div className="flex gap-2">
+              <p>Kommentieren</p>
+              <FaArrowRight />
+            </div>
           </button>
 
           {aktivesKommentarFeld === eintrag.id && (
-            <div className="w-full flex-col mt-2 mb-4  px-5 ">
+            <div className="w-full p-5 ">
               <input
-                className="bg-slate-100 rounded-lg"
+                className="bg-slate-100 rounded-lg w-full mb-2 p-2"
                 value={valueKommentar}
                 onChange={(e) => setValueKommentar(e.target.value)}
               />

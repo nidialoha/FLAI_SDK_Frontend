@@ -1,4 +1,4 @@
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import Modal from "../Modal/Modal";
 import { FaTrashAlt } from "react-icons/fa";
@@ -6,6 +6,10 @@ import { MdClose } from "react-icons/md";
 
 function NavBar() {
   const [open, setOpen] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const isOnSignupLogin = ["/signup", "/login"].includes(location.pathname);
 
   const [notifications, setNotifications] = useState([
     {
@@ -34,40 +38,68 @@ function NavBar() {
   };
 
   return (
-    <>
-      <div className="flex justify-between pt-4">
-        <img src="Logo.svg" alt="logo" className="w-1/7" />
-        <label className="input">
-          <svg
-            className="h-[1em] opacity-50"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-          >
-            <g
-              strokeLinejoin="round"
-              strokeLinecap="round"
-              strokeWidth="2.5"
-              fill="none"
-              stroke="currentColor"
+    <div className="flex justify-between pt-4">
+      <img
+        src={
+          isOnSignupLogin
+            ? "https://res.cloudinary.com/dtgshnrcb/image/upload/v1747205083/eteakt5n9cmbagluxdx5.svg"
+            : "https://res.cloudinary.com/dtgshnrcb/image/upload/v1747205076/skott6nt0pzdgdyhesvw.svg"
+        }
+        alt="logo"
+        className="w-1/7"
+      />
+      {!isOnSignupLogin && (
+        <>
+          <label className="input mt-5">
+            <svg
+              className="h-[1em] opacity-50"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
             >
-              <circle cx="11" cy="11" r="8"></circle>
-              <path d="m21 21-4.3-4.3"></path>
-            </g>
-          </svg>
-          <input type="search" required placeholder="Search" />
-        </label>
-        <div className="flex gap-8 items-center">
-          <NavLink to="/forum">Forum</NavLink>
-          <NavLink to="/blog">Blog</NavLink>
-          <button onClick={() => setOpen(true)}>
-            <img
-              src="392523_bell_notification_remind_reminder_ring_icon.svg"
-              alt="notification"
-              className="bg-[#FFBE0A] rounded-full mr-5 cursor-pointer"
-            />
-          </button>
-          <Modal open={open} onClose={() => setOpen(false)}>
-            <>
+              <g
+                strokeLinejoin="round"
+                strokeLinecap="round"
+                strokeWidth="2.5"
+                fill="none"
+                stroke="currentColor"
+              >
+                <circle cx="11" cy="11" r="8"></circle>
+                <path d="m21 21-4.3-4.3"></path>
+              </g>
+            </svg>
+            <input type="search" required placeholder="Search" />
+          </label>
+        </>
+      )}
+      <div className="flex gap-8 p-4 items-center">
+        {isOnSignupLogin ? (
+          <>
+            <NavLink className="text-white" to="/forum">
+              Forum
+            </NavLink>
+            <NavLink className="text-white" to="/blog">
+              Blog
+            </NavLink>
+          </>
+        ) : (
+          <>
+            {" "}
+            <NavLink to="/forum">Forum</NavLink>
+            <NavLink to="/blog">Blog</NavLink>{" "}
+          </>
+        )}
+
+        {!isOnSignupLogin && (
+          <>
+            <button onClick={() => setOpen(true)}>
+              <img
+                src="392523_bell_notification_remind_reminder_ring_icon.svg"
+                alt="notification"
+                className="bg-[#FFBE0A] rounded-full mr-5 cursor-pointer"
+              />
+            </button>
+
+            <Modal open={open} onClose={() => setOpen(false)}>
               <div className="flex flex-col gap-5">
                 <div className="relative mb-5 border-b-1">
                   <h3>Notification</h3>
@@ -92,11 +124,11 @@ function NavBar() {
                   </div>
                 ))}
               </div>
-            </>
-          </Modal>
-        </div>
+            </Modal>
+          </>
+        )}
       </div>
-    </>
+    </div>
   );
 }
 
