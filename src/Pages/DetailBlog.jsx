@@ -308,6 +308,7 @@ function DetailBlog() {
       </div>
       <div className="ml-5">
         <button
+          data-refid={generalObject.mainPost.id}
           onClick={handleAnswerSubmit}
           className="mt-3 text-xs rounded-lg bg-[#FF658A] text-white p-2 cursor-pointer w-full"
         >

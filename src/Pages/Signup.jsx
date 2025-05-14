@@ -18,9 +18,8 @@ function Signup() {
 
   const [previewImage, setPreviewImage] = useState("");
 
-  const cloudName = "dtgshnrcb";
-  const uploadPreset = "FLAI-SDK";
-
+  const cloudName = `${import.meta.env.VITE_CLOUDINARY_NAME}`;
+  const uploadPreset = `${import.meta.env.VITE_UPLOAD_PRESET}`;
   const handleChange = (e) => {
     const { name, value } = e.target;
     setSignUpData((prev) => ({
