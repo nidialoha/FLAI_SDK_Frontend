@@ -3,9 +3,13 @@ import { useState } from "react";
 import Modal from "../Modal/Modal";
 import { FaTrashAlt } from "react-icons/fa";
 import { MdClose } from "react-icons/md";
+import ModalSearch from "../Modal/ModalSearch";
 
 function NavBar() {
   const [open, setOpen] = useState(false);
+  const [searchModalOpen, setSearchModalOpen] = useState(false);
+  const [searchValue, setSearchValue] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -37,6 +41,39 @@ function NavBar() {
     setNotifications(newNotifications);
   };
 
+
+  const handleSearch = async (e)=>{
+    try {
+      if(e.key != "Enter") return;
+      if(!searchValue) return;
+      let requestObject = {searchString:searchValue, type:null};
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/forum/search`,
+        {
+          method: "POST",
+          body: JSON.stringify(requestObject),
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      if (!response.ok) throw new Error();
+      const res = await response.json();
+      console.log(res);
+      setSearchModalOpen(true);
+      setSearchResults([...res]);
+
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const stripHtml = (html) => {
+    const tmp = document.createElement("div");
+    tmp.innerHTML = html;
+    return tmp.textContent || tmp.innerText || "";
+  };
   return (
     <div className="flex justify-between pt-4">
       <img
@@ -67,8 +104,36 @@ function NavBar() {
                 <path d="m21 21-4.3-4.3"></path>
               </g>
             </svg>
-            <input type="search" required placeholder="Search" />
+            <input type="search" onKeyUp={handleSearch} onChange={(e)=>setSearchValue(e.target.value.trim())} required placeholder="Search" />
           </label>
+          
+
+            <ModalSearch open={searchModalOpen} onClose={() => setSearchModalOpen(false)}>
+              <div className="flex flex-col gap-5">
+                <div className="relative mb-5 border-b-1">
+                  <h3>Suchergebnisse</h3>
+                  <MdClose
+                    className="absolute top-0 right-0 cursor-pointer"
+                    onClick={() => setSearchModalOpen(false)}
+                  />
+                </div>
+
+                {searchResults.map((s) => (
+                  <NavLink onClick={()=>setSearchModalOpen(false)} to={s.type == "question"? `/detailForum/${s.id}`: `/detailBlog/${s.id}`}>
+                    <div
+                    key={s.id}
+                    className="items-center mb-3"
+                  >
+                    
+                    <h3 className="">{s.title}</h3>
+                    <p className=" line-clamp-1">{stripHtml(s.content)}</p>
+                    
+                  </div>
+                  </NavLink>
+                  
+                ))}
+              </div>
+            </ModalSearch>
         </>
       )}
       <div className="flex gap-8 p-4 items-center">
@@ -125,6 +190,7 @@ function NavBar() {
                 ))}
               </div>
             </Modal>
+
           </>
         )}
       </div>

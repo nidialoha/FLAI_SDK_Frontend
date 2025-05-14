@@ -25,6 +25,7 @@
     "react-markdown": "^10.1.0",
     "react-quill-new": "^3.4.6",
     "react-router-dom": "^7.5.3",
+    "react-spinners": "^0.17.0",
     "rehype-raw": "^7.0.0",
     "tailwindcss": "^4.1.4"
   },

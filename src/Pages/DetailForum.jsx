@@ -8,6 +8,8 @@ import KommentarKarte from "../Components/KommentarKarte";
 import AntwortKarte from "../Components/AntwortKarte";
 import { useAuth } from "../Context/AuthProvider";
 import { FaArrowRight } from "react-icons/fa";
+import toast, { Toaster } from "react-hot-toast";
+import { RingLoader } from "react-spinners";
 
 function DetailForum() {
   const { id } = useParams();
@@ -25,12 +27,12 @@ function DetailForum() {
   const [alleKommentareAnzeigen, setAlleKommentareAnzeigen] = useState(false);
   const [aktivesKommentarFeld, setAktivesKommentarFeld] = useState(null);
   const [kommentarWerte, setKommentarWerte] = useState({});
+  const [isLoading, setIsLoading] = useState(false)
 
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const fetchGeneralObject = async () => {
+  const fetchGeneralObject = async () => {
       try {
+        console.log(isLoading);
         const response = await fetch(
           `${import.meta.env.VITE_API_URL}/forum/${id}`,
           {
@@ -53,9 +55,13 @@ function DetailForum() {
         console.log(error);
       }
     };
-
+  useEffect(() => {    
     fetchGeneralObject();
   }, []);
+
+  useEffect(()=>{
+    fetchGeneralObject();
+  }, [id])
   //const generalObject = {main:{...postObject, comments: []}, answers:[{...answerObject, commments:[]}]};
 
   // Quill Module
@@ -259,11 +265,17 @@ function DetailForum() {
     }
   };
 
+  
+
   const generateAIAnswer = async (e) => {
     try {
       e.preventDefault();
+      if(generalObject.hasAIAnswer) return;
+      setIsLoading(true);
+      
       let refId = e.target.dataset.refid;
-      let requestObject = { message: generalObject.mainPost.content };
+      console.log(refId);
+      let requestObject = { message: generalObject.mainPost.title + " "+generalObject.mainPost.content };            
       const response = await fetch(
         `${import.meta.env.VITE_API_URL}/forum/ai/${refId}`,
         {
@@ -287,13 +299,17 @@ function DetailForum() {
         answers: [...answersArray],
         hasAIAnswer: true
       });
+      
     } catch (error) {
       console.log(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <>
+    
       <button
         className="flex gap-3 ml-5 mt-3 cursor-pointer hover:font-black"
         onClick={() => navigate(-1)}
@@ -400,14 +416,26 @@ function DetailForum() {
         </button>
       )} */}
 
-      {user!==null && readyForAI && generalObject.mainPost.userId == user.id && (
+      {user!==null && !generalObject.hasAIAnswer && readyForAI && generalObject.mainPost.userId == user.id && (
+        <div className="ml-5">
         <button
           onClick={generateAIAnswer}
           data-refid={generalObject.mainPost.id}
-          className="mt-3 text-xs rounded-lg bg-[#FF658A] text-white p-2 cursor-pointer w-full"
+          disabled={isLoading}          
+          className={`mt-3 text-xs rounded-lg bg-indigo-500 text-white p-2 cursor-pointer w-full`}
         >
-          Frag Gemini
+          {isLoading ? (<div className="flex flex-row justify-center"><RingLoader
+        color="#fff"
+        loading={isLoading}
+        className="mr-5"
+        size={20}
+        aria-label="Loading Spinner"
+        data-testid="loader"
+      /> Generiere KI Antwort...
+            </div>) : (<>Frag Robo Pinta</>)}
         </button>
+        </div>
+        
       )}
       {/* Antworten */}
       <h2 className="font-bold ml-5 mb-2 mt-4">Antwort geben</h2>
