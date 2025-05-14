@@ -12,14 +12,46 @@ function NavBarRechts() {
   const [interestsList, setInterestsList] = useState([]);
   const [topUserList, setTopUserList] = useState([]);
   const { user, isAuthenticated, logout } = useAuth();
+  const [interestsArray, setInterestsArray] = useState([]);
+  const [topUserArray, setTopUserArray] = useState([]);
 
   const handleLogout = () => {
     logout();
     navigate("/forum");
   };
 
+  const fetchInterestsPosts = async ()=>{
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/users/interests/${user.id}`);
+      if(!response.ok) throw new Error();
+      const res = await response.json();
+      console.log(res);
+      setInterestsArray([...res]);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const fetchTopUser = async ()=>{
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/users/`);
+      if(!response.ok) throw new Error();
+      const res = await response.json();
+      console.log(res);
+      setTopUserArray([...res]);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   //fetching der Interessen und User mit den meisten Punkten
-  useEffect(() => {}, []);
+  useEffect(() => {
+    fetchTopUser();
+  }, []);
+
+  useEffect(()=>{
+    fetchInterestsPosts();  
+  }, [isAuthenticated])
 
   return (
     <div className="flex flex-col">
@@ -93,36 +125,27 @@ function NavBarRechts() {
           <h2 className="border-b-2 w-full text-left font-bold">
             Könnte dich interessieren
           </h2>
-          <p>Lorem Ipsum</p>
-          <p>Lorem Ipsum</p>
-          <p>Lorem Ipsum</p>
-          <p>Lorem Ipsum</p>
-          <p>Lorem Ipsum</p>
-          <p>Lorem Ipsum</p>
-          <p>Lorem Ipsum</p>
+          {interestsArray.map((e)=>(<NavLink to={e.type=="question"? `/detailForum/${e.id}`: `/detailBlog/${e.id}`}>
+              <h4 className="truncate max-w-[50ch]">{e.title}</h4>
+            </NavLink>)
+            
+          
+          )}
         </div>
       )}
 
       <div className="bg-linear-to-r from-purple-500 to-indigo-500 p-6 mt-5 gap-2 mr-6 flex flex-col text-center rounded-lg items-start text-white">
         <h2 className="border-b-2 w-full text-left font-bold">Top Nutzer</h2>
-        <div className="flex ">
-          <p className="text-left">Linda Musterfrau</p>
+        
+        {topUserArray.map((e)=>(
+          <div className="flex ">
+          <p className="text-left">{e.name}</p>
           <button className="cursor-pointer">
             <GoPlusCircle className="text-xl ml-2" />
           </button>
         </div>
-        <div className="flex">
-          <p className="text-left">Maximilian Mustermann</p>
-          <button className="cursor-pointer">
-            <GoPlusCircle className="text-xl ml-2" />
-          </button>
-        </div>
-        <div className="flex">
-          <p className="text-left">Benedict Doe</p>
-          <button className="cursor-pointer">
-            <GoPlusCircle className="text-xl ml-2" />
-          </button>
-        </div>
+        ))}
+        
       </div>
       <div className="bg-linear-to-r from-purple-500 to-indigo-500 p-6 mt-5 gap-2 mr-6 flex flex-col text-center rounded-lg items-start text-white">
         <h2 className="text-left border-b-2">Community Rules!</h2>

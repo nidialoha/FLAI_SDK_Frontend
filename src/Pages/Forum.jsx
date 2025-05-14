@@ -58,7 +58,7 @@ function Forum() {
                         60 /
                         60 /
                         24
-                    )} Tage`
+                    )} Tag(e)`
                   : `${Math.floor(
                       (Date.now() - Date.parse(e.createdAt)) / 1000 / 60 / 60
                     )} Std.`
@@ -169,9 +169,9 @@ function Forum() {
     "code-block",
   ];
 
-  const handlePrivateChange = (e) => {
-    setIsPrivate(e.target.checked);
-  };
+  // const handlePrivateChange = (e) => {
+  //   setIsPrivate(e.target.checked);
+  // };
 
   return (
     <>
@@ -207,12 +207,12 @@ function Forum() {
             value={titel}
             onChange={(e) => setTitel(e.target.value)}
           />
-          <h3>Privat?</h3>
+          {/* <h3>Privat?</h3>
           <input
             type="checkbox"
             onClick={handlePrivateChange}
             className="checkbox"
-          />
+          /> */}
           <h3>Schlagwörter</h3>
 
           {/* Anzeige der ausgewählten Tags */}

@@ -2,6 +2,8 @@ import { AiOutlineLike } from "react-icons/ai";
 import { AiOutlineDislike } from "react-icons/ai";
 import { TfiControlRecord } from "react-icons/tfi";
 import KommentarKarte from "./KommentarKarte";
+import Markdown from "react-markdown";
+import rehypeRaw from "rehype-raw";
 
 function AntwortKarte({
   nutzerNameKommentar,
@@ -13,6 +15,7 @@ function AntwortKarte({
   userReaction,
   onReact,
   bild,
+  isAIAnswer
 }) {
  
   return (
@@ -76,8 +79,10 @@ function AntwortKarte({
 
           <div
             className="ml-5 text-sm font-semibold mt-3 leading-relaxed space-y-2 prose prose-sm max-w-none"
-            dangerouslySetInnerHTML={{ __html: kommentarPost }}
-          ></div>
+          >
+            {isAIAnswer ? (<Markdown children={kommentarPost}></Markdown>) : ( <Markdown children={kommentarPost} rehypePlugins={rehypeRaw}></Markdown>
+          )}
+          </div>
           {/* <button className="underline text-xs italic ml-5 hover:font-bold cursor-pointer">
             Kommentieren
           </button> */}
