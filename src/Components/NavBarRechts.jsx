@@ -77,7 +77,7 @@ function NavBarRechts() {
             </p>
             <div className="flex gap-3 items-center mt-2">
               <NavLink
-                to="/signup"
+                to="/login"
                 className="text-white text-xs underline cursor-pointer"
               >
                 Jetzt anmelden
