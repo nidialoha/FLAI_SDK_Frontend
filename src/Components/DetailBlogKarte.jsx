@@ -4,6 +4,8 @@ import { IoTimeOutline } from "react-icons/io5";
 import { FaRegBookmark } from "react-icons/fa";
 import { AiOutlineLike } from "react-icons/ai";
 import { TfiControlRecord } from "react-icons/tfi";
+import rehypeRaw from "rehype-raw";
+import Markdown from "react-markdown";
 
 function DetailBlogKarte({
   title,
@@ -57,7 +59,7 @@ function DetailBlogKarte({
         </div>
 
         <div className="m-5">
-          <p>{text}</p>
+          <Markdown children={text} rehypePlugins={rehypeRaw}></Markdown>
           <div className="flex gap-2 flex-wrap">
             {tags.map((tag, idx) => (
               <p key={idx} className="bg-slate-300 px-3 rounded-lg mt-6">

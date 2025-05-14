@@ -4,7 +4,7 @@ import { AiOutlineLike } from "react-icons/ai";
 import { TfiControlRecord } from "react-icons/tfi";
 import { NavLink } from "react-router";
 
-function BlogKarte({ title, text, tags, badges, likes, views, time }) {
+function BlogKarte({ title, text, tags, badges, likes, views, time, id }) {
   const stripHtml = (html) => {
     const tmp = document.createElement("div");
     tmp.innerHTML = html;
@@ -12,7 +12,7 @@ function BlogKarte({ title, text, tags, badges, likes, views, time }) {
   };
   return (
     <>
-      <NavLink to="/detailblog">
+      <NavLink to={`/detailblog/${id}`}>
         <div className="mt-4 shadow-md p-6 ml-5 rounded-xl bg-white">
           <div className="grid grid-cols-5 gap-10 ">
             <div className="flex flex-col items-center border-r-1">

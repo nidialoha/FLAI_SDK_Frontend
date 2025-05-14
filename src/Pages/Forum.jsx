@@ -108,7 +108,7 @@ function Forum() {
         //isPrivate,
         tags: selectedTags,
       };
-      
+
       const response = await fetch(`${import.meta.env.VITE_API_URL}/forum`, {
         method: "POST",
         body: JSON.stringify(neuerBeitrag),
@@ -119,7 +119,7 @@ function Forum() {
       });
 
       if (!response.ok) throw new Error();
-      
+
       const res = await response.json();
       neuerBeitrag = res.createdPost;
       neuerBeitrag.time =
@@ -139,7 +139,7 @@ function Forum() {
       setValue("");
       setSelectedTags([]);
       setCustomTag("");
-      setIsPrivate(false);
+      //setIsPrivate(false);
     } catch (error) {
       console.log(error);
     }
