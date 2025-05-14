@@ -3,6 +3,7 @@ import { IoTimeOutline } from "react-icons/io5";
 import { AiOutlineLike } from "react-icons/ai";
 import { TfiControlRecord } from "react-icons/tfi";
 import { NavLink } from "react-router";
+import "quill/dist/quill.snow.css";
 
 function BlogKarte({ title, text, tags, badges, likes, views, time, id }) {
   const stripHtml = (html) => {

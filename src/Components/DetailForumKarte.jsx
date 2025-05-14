@@ -6,6 +6,7 @@ import { AiOutlineDislike } from "react-icons/ai";
 import { TfiControlRecord } from "react-icons/tfi";
 import rehypeRaw from "rehype-raw";
 import Markdown from "react-markdown";
+import "quill/dist/quill.snow.css";
 
 function DetailForumKarte({
   title,
@@ -66,7 +67,11 @@ function DetailForumKarte({
         </div>
 
         <div className="m-5">
-          <Markdown children={text} rehypePlugins={rehypeRaw}></Markdown>
+          {/* <Markdown children={text} rehypePlugins={rehypeRaw}></Markdown> */}
+          <div
+            className="ql-editor"
+            dangerouslySetInnerHTML={{ __html: text }}
+          ></div>
           {/* <p>{stripHtml(text)}</p> */}
           <div className="flex gap-2 flex-wrap">
             {tags.map((tag, idx) => (

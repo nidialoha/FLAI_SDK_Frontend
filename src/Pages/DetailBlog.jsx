@@ -40,9 +40,7 @@ function DetailBlog() {
       if (!response.ok) throw new Error();
       const res = await response.json();
       console.log(res);
-      let dateOfPost = Date.parse(res.mainPost.createdAt);
-      let difference = Date.now() - dateOfPost;
-      if (difference > 1000 * 60 * 120) setReadyForAI(true);
+
       setGeneralObject({ ...res });
     } catch (error) {
       console.log(error);
