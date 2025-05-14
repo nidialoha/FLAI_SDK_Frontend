@@ -8,7 +8,6 @@ import KommentarKarte from "../Components/KommentarKarte";
 import AntwortKarte from "../Components/AntwortKarte";
 import { useAuth } from "../Context/AuthProvider";
 import { FaArrowRight } from "react-icons/fa";
-import toast, { Toaster } from "react-hot-toast";
 import { RingLoader } from "react-spinners";
 
 function DetailForum() {
@@ -16,8 +15,8 @@ function DetailForum() {
   const { user } = useAuth();
   const [generalObject, setGeneralObject] = useState({
     mainPost: { tags: [], comments: [] },
-    answers: [{ comments: [] }, ],
-    hasAIAnswer:false
+    answers: [{ comments: [] }],
+    hasAIAnswer: false,
   });
   const [readyForAI, setReadyForAI] = useState(false);
   const [valueAntwort, setValueAntwort] = useState("");
@@ -27,41 +26,41 @@ function DetailForum() {
   const [alleKommentareAnzeigen, setAlleKommentareAnzeigen] = useState(false);
   const [aktivesKommentarFeld, setAktivesKommentarFeld] = useState(null);
   const [kommentarWerte, setKommentarWerte] = useState({});
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
   const fetchGeneralObject = async () => {
-      try {
-        console.log(isLoading);
-        const response = await fetch(
-          `${import.meta.env.VITE_API_URL}/forum/${id}`,
-          {
-            method: "GET",
-            credentials: "include",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
+    try {
+      console.log(isLoading);
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/forum/${id}`,
+        {
+          method: "GET",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
-        if (!response.ok) throw new Error();
-        const res = await response.json();
-        console.log(res);
-        let dateOfPost = Date.parse(res.mainPost.createdAt);
-        let difference = Date.now() - dateOfPost;
-        if (difference > 1000 * 60 * 120) setReadyForAI(true);
-        setGeneralObject({ ...res });
-      } catch (error) {
-        console.log(error);
-      }
-    };
-  useEffect(() => {    
+      if (!response.ok) throw new Error();
+      const res = await response.json();
+      console.log(res);
+      let dateOfPost = Date.parse(res.mainPost.createdAt);
+      let difference = Date.now() - dateOfPost;
+      if (difference > 1000 * 60 * 120) setReadyForAI(true);
+      setGeneralObject({ ...res });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
     fetchGeneralObject();
   }, []);
 
-  useEffect(()=>{
+  useEffect(() => {
     fetchGeneralObject();
-  }, [id])
+  }, [id]);
   //const generalObject = {main:{...postObject, comments: []}, answers:[{...answerObject, commments:[]}]};
 
   // Quill Module
@@ -202,7 +201,7 @@ function DetailForum() {
             comments: [...mainPostComments],
           },
           answers: [...generalObject.answers],
-          hasAIAnswer: generalObject.hasAIAnswer
+          hasAIAnswer: generalObject.hasAIAnswer,
         });
       } else {
         let answersArray = [...generalObject.answers];
@@ -218,7 +217,7 @@ function DetailForum() {
         setGeneralObject({
           mainPost: { ...generalObject.mainPost },
           answers: [...updatedAnswers],
-          hasAIAnswer: generalObject.hasAIAnswer
+          hasAIAnswer: generalObject.hasAIAnswer,
         });
       }
       setValueKommentar("");
@@ -258,24 +257,25 @@ function DetailForum() {
           ...generalObject.mainPost,
         },
         answers: [...answersArray],
-        hasAIAnswer: generalObject.hasAIAnswer
+        hasAIAnswer: generalObject.hasAIAnswer,
       });
     } catch (error) {
       console.log(error);
     }
   };
 
-  
-
   const generateAIAnswer = async (e) => {
     try {
       e.preventDefault();
-      if(generalObject.hasAIAnswer) return;
+      if (generalObject.hasAIAnswer) return;
       setIsLoading(true);
-      
+
       let refId = e.target.dataset.refid;
       console.log(refId);
-      let requestObject = { message: generalObject.mainPost.title + " "+generalObject.mainPost.content };            
+      let requestObject = {
+        message:
+          generalObject.mainPost.title + " " + generalObject.mainPost.content,
+      };
       const response = await fetch(
         `${import.meta.env.VITE_API_URL}/forum/ai/${refId}`,
         {
@@ -297,9 +297,8 @@ function DetailForum() {
           ...generalObject.mainPost,
         },
         answers: [...answersArray],
-        hasAIAnswer: true
+        hasAIAnswer: true,
       });
-      
     } catch (error) {
       console.log(error);
     } finally {
@@ -309,7 +308,6 @@ function DetailForum() {
 
   return (
     <>
-    
       <button
         className="flex gap-3 ml-5 mt-3 cursor-pointer hover:font-black"
         onClick={() => navigate(-1)}
@@ -416,27 +414,35 @@ function DetailForum() {
         </button>
       )} */}
 
-      {user!==null && !generalObject.hasAIAnswer && readyForAI && generalObject.mainPost.userId == user.id && (
-        <div className="ml-5">
-        <button
-          onClick={generateAIAnswer}
-          data-refid={generalObject.mainPost.id}
-          disabled={isLoading}          
-          className={`mt-3 text-xs rounded-lg bg-indigo-500 text-white p-2 cursor-pointer w-full`}
-        >
-          {isLoading ? (<div className="flex flex-row justify-center"><RingLoader
-        color="#fff"
-        loading={isLoading}
-        className="mr-5"
-        size={20}
-        aria-label="Loading Spinner"
-        data-testid="loader"
-      /> Generiere KI Antwort...
-            </div>) : (<>Frag Robo Pinta</>)}
-        </button>
-        </div>
-        
-      )}
+      {user !== null &&
+        !generalObject.hasAIAnswer &&
+        readyForAI &&
+        generalObject.mainPost.userId == user.id && (
+          <div className="ml-5">
+            <button
+              onClick={generateAIAnswer}
+              data-refid={generalObject.mainPost.id}
+              disabled={isLoading}
+              className={`mt-3 text-xs rounded-lg bg-indigo-500 text-white p-2 cursor-pointer w-full`}
+            >
+              {isLoading ? (
+                <div className="flex flex-row justify-center">
+                  <RingLoader
+                    color="#fff"
+                    loading={isLoading}
+                    className="mr-5"
+                    size={20}
+                    aria-label="Loading Spinner"
+                    data-testid="loader"
+                  />{" "}
+                  Generiere KI Antwort...
+                </div>
+              ) : (
+                <>Frag Robo Pinta</>
+              )}
+            </button>
+          </div>
+        )}
       {/* Antworten */}
       <h2 className="font-bold ml-5 mb-2 mt-4">Antwort geben</h2>
       <div className="bg-white h-[250px] rounded-lg ml-5 overflow-hidden">

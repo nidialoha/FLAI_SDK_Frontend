@@ -1,70 +1,156 @@
 import { useState, useEffect } from "react";
 import ReactQuill, { Quill } from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { FaArrowLeft } from "react-icons/fa";
 import DetailBlogKarte from "../Components/DetailBlogKarte";
 import AntwortKarte from "../Components/AntwortKarte";
 import { useAuth } from "../Context/AuthProvider";
+import { FaArrowRight } from "react-icons/fa";
 
 function DetailBlog() {
-  const [value, setValue] = useState("");
+  const { id } = useParams();
+  const [generalObject, setGeneralObject] = useState({
+    mainPost: { tags: [], comments: [] },
+    answers: [{ comments: [] }],
+    hasAIAnswer: false,
+  });
+  const [value, setValue] = useState(""); // Antwort/Kommentar zu MainPost
   const [antwort, setAntwort] = useState([]);
+  const [valueKommentar, setValueKommentar] = useState("");
   const [kommentarWerte, setKommentarWerte] = useState({});
   const [aktivesKommentarFeld, setAktivesKommentarFeld] = useState(null);
   const { user, isAuthenticated } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
 
-  const detailBlog = [
-    {
-      id: 1,
-      title: "Wie Tailwind funktioniert.",
-      nutzerName: "Max Mustermann",
-      badges: 12,
-      likes: 20,
-      views: 4,
-      time: "2 min.",
-      text: "The classic Latin passage that just never gets old, enjoy as much (or as little) lorem ipsum as you can handle with our easy to use filler text generator. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
-      tags: ["Schlagwort", "CSS"],
-    },
-  ];
+  const fetchGeneralObject = async () => {
+    try {
+      console.log(isLoading);
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/forum/${id}`,
+        {
+          method: "GET",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
+      if (!response.ok) throw new Error();
+      const res = await response.json();
+      console.log(res);
+      let dateOfPost = Date.parse(res.mainPost.createdAt);
+      let difference = Date.now() - dateOfPost;
+      if (difference > 1000 * 60 * 120) setReadyForAI(true);
+      setGeneralObject({ ...res });
+    } catch (error) {
+      console.log(error);
+    }
+  };
   useEffect(() => {
-    const fetchedAntwort = [
-      {
-        id: 1,
-        nutzerNameKommentar: "Bob the Builder",
-        nutzerBadges: 13,
-        kommentarPost: "Test kommentar Post",
-        likeAntwort: 6,
-        dislikeAntwort: 2,
-        kommentarAntwort: [
-          "Anna kommentiert: Kommentar 1 zu Kommentar",
-          "Jackson kommentiert: Kommentar 2 zu Kommentar",
-        ],
-        userReaction: null,
-      },
-    ];
-
-    setAntwort(fetchedAntwort);
+    fetchGeneralObject();
   }, []);
 
+  useEffect(() => {
+    fetchGeneralObject();
+  }, [id]);
+
   // Kommentar hinzufügen
-  const kommentarHinzufuegen = () => {
-    if (!value.trim() || !isAuthenticated) return;
+  const handleAnswerSubmit = async (e) => {
+    try {
+      e.preventDefault();
+      if (!value.trim()) return;
+      let refId = e.target.dataset.refid;
+      console.log(refId);
+      const answer = {
+        type: "answer",
+        content: value,
+        userId: user.id,
+        refId,
+      };
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/blogs/`, {
+        method: "POST",
+        body: JSON.stringify(answer),
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (!response.ok) throw new Error();
+      const res = await response.json();
+      console.log(res);
+      let answersArray = [...generalObject.answers];
+      answersArray.push({ ...res.createdPost, comments: [] });
+      setValue("");
+      setGeneralObject({
+        mainPost: {
+          ...generalObject.mainPost,
+        },
+        answers: [...answersArray],
+        hasAIAnswer: generalObject.hasAIAnswer,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-    const neuerKommentar = {
-      id: antwort.length + 1,
-      nutzerNameKommentar: user?.name || "Anonymer Nutzer",
-      nutzerBadges: Math.floor(Math.random() * 10) + 1, // später dynamisch
-      kommentarPost: value,
-      likeAntwort: 0,
-      dislikeAntwort: 0,
-      kommentarAntwort: [],
-      userReaction: null,
-    };
+  const handleCommentSubmit = async (e) => {
+    try {
+      e.preventDefault();
+      if (!valueKommentar.trim()) return;
+      let refId = e.target.dataset.refid;
+      console.log(refId);
+      const comment = {
+        type: "comment",
+        content: valueKommentar,
+        userId: user.id,
+        refId,
+      };
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/blogs/`, {
+        method: "POST",
+        body: JSON.stringify(comment),
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (!response.ok) throw new Error();
+      const res = await response.json();
+      console.log(res);
+      if (generalObject.mainPost.id == refId) {
+        let mainPostComments = [...generalObject.mainPost.comments];
+        mainPostComments.push({ ...res.createdPost });
 
-    setAntwort((prev) => [...prev, neuerKommentar]);
-    setValue(""); // Editor leeren
+        setGeneralObject({
+          mainPost: {
+            ...generalObject.mainPost,
+            comments: [...mainPostComments],
+          },
+          answers: [...generalObject.answers],
+          hasAIAnswer: generalObject.hasAIAnswer,
+        });
+      } else {
+        let answersArray = [...generalObject.answers];
+        let commentsArrayToUpdate = answersArray.find(
+          (a) => a.id == refId
+        ).comments;
+        commentsArrayToUpdate.push({ ...res.createdPost });
+        let updatedAnswers = answersArray.map((el) =>
+          el.id == refId
+            ? { ...el, comments: commentsArrayToUpdate }
+            : { ...el }
+        );
+        setGeneralObject({
+          mainPost: { ...generalObject.mainPost },
+          answers: [...updatedAnswers],
+          hasAIAnswer: generalObject.hasAIAnswer,
+        });
+      }
+      setValueKommentar("");
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const toggleReaction = (id, type) => {
@@ -153,19 +239,61 @@ function DetailBlog() {
       </button>
       {/* Karte */}
 
-      {detailBlog.map((blogEintrag) => (
+      {
         <DetailBlogKarte
-          key={blogEintrag.id}
-          title={blogEintrag.title}
-          nutzerName={blogEintrag.nutzerName}
-          badges={blogEintrag.badges}
-          likes={blogEintrag.likes}
-          views={blogEintrag.views}
-          time={blogEintrag.time}
-          text={blogEintrag.text}
-          tags={blogEintrag.tags}
+          key={generalObject.mainPost.id}
+          title={generalObject.mainPost.title}
+          nutzerName={generalObject.mainPost.userName}
+          text={generalObject.mainPost.content}
+          tags={generalObject.mainPost.tags}
+          views={generalObject.mainPost.viewCount}
+          badges={0}
+          time={
+            Math.floor(
+              (Date.now() - Date.parse(generalObject.mainPost.createdAt)) / 1000
+            ) > 60
+              ? Math.floor(
+                  (Date.now() - Date.parse(generalObject.mainPost.createdAt)) /
+                    1000 /
+                    60
+                ) > 60
+                ? Math.floor(
+                    (Date.now() -
+                      Date.parse(generalObject.mainPost.createdAt)) /
+                      1000 /
+                      60 /
+                      60
+                  ) > 24
+                  ? `${Math.floor(
+                      (Date.now() -
+                        Date.parse(generalObject.mainPost.createdAt)) /
+                        1000 /
+                        60 /
+                        60 /
+                        24
+                    )} Tag(e)`
+                  : `${Math.floor(
+                      (Date.now() -
+                        Date.parse(generalObject.mainPost.createdAt)) /
+                        1000 /
+                        60 /
+                        60
+                    )} Std.`
+                : `${Math.floor(
+                    (Date.now() -
+                      Date.parse(generalObject.mainPost.createdAt)) /
+                      1000 /
+                      60
+                  )} Min.`
+              : `${Math.floor(
+                  (Date.now() - Date.parse(generalObject.mainPost.createdAt)) /
+                    1000
+                )} Sek.`
+          }
+          likes={generalObject.mainPost.numberOfLikes}
+          dislikes={generalObject.mainPost.numberOfDislikes}
         />
-      ))}
+      }
 
       {/* Editor Bereich */}
       <div className="bg-white h-[220px] rounded-lg ml-5 overflow-hidden">
@@ -180,7 +308,7 @@ function DetailBlog() {
       </div>
       <div className="ml-5">
         <button
-          onClick={kommentarHinzufuegen}
+          onClick={handleAnswerSubmit}
           className="mt-3 text-xs rounded-lg bg-[#FF658A] text-white p-2 cursor-pointer w-full"
         >
           Kommentar schicken
@@ -189,75 +317,45 @@ function DetailBlog() {
       <div>
         <h2 className="font-bold ml-5 mt-4">Kommentare</h2>
       </div>
-      {antwort.map((blogEintrag) => (
-        <div key={blogEintrag.id}>
+      {generalObject.answers.map((eintrag) => (
+        <div key={eintrag.id}>
           <AntwortKarte
-            key={blogEintrag.id}
-            nutzerNameKommentar={blogEintrag.nutzerNameKommentar}
-            nutzerBadges={blogEintrag.nutzerBadges}
-            kommentarPost={blogEintrag.kommentarPost}
-            likeAntwort={blogEintrag.likeAntwort}
-            dislikeAntwort={blogEintrag.dislikeAntwort}
-            kommentarAntwort={blogEintrag.kommentarAntwort}
-            userReaction={blogEintrag.userReaction}
-            onReact={(type) => toggleReaction(blogEintrag.id, type)}
+            nutzerNameKommentar={eintrag.userName}
+            nutzerBadges={0}
+            kommentarPost={eintrag.content}
+            kommentarAntwort={eintrag.comments}
+            likeAntwort={eintrag.numberOfLikes}
+            dislikeAntwort={eintrag.numberOfDislikes}
+            userReaction={""}
+            onReact={""}
+            bild={eintrag.image}
           />
 
-          {/* Button zum Kommentieren */}
+          {/* Kommentar-Editor für Antwort */}
           <button
-            className="underline text-xs italic ml-5 mt-2 cursor-pointer"
+            className="underline text-xs italic ml-5 cursor-pointer hover:font-bold hover:text-[#FF658A]"
             onClick={() =>
               setAktivesKommentarFeld(
-                aktivesKommentarFeld === blogEintrag.id ? null : blogEintrag.id
+                aktivesKommentarFeld === eintrag.id ? null : eintrag.id
               )
             }
           >
-            Kommentieren
+            <div className="flex gap-2">
+              <p>Kommentieren</p>
+              <FaArrowRight />
+            </div>
           </button>
 
-          {/* Kommentar-Eingabefeld anzeigen, wenn aktiv */}
-          {aktivesKommentarFeld === blogEintrag.id && (
-            <div className="ml-5 mt-2 mb-4 bg-slate-100 p-2 rounded-lg">
-              <ReactQuill
-                theme="snow"
-                value={kommentarWerte[blogEintrag.id] || ""}
-                onChange={(content) =>
-                  setKommentarWerte((prev) => ({
-                    ...prev,
-                    [blogEintrag.id]: content,
-                  }))
-                }
-                modules={modulesKommentar}
-                formats={formats}
-                className="quill-kommentar-antwort"
+          {aktivesKommentarFeld === eintrag.id && (
+            <div className="w-full p-5 ">
+              <input
+                className="bg-slate-100 rounded-lg w-full mb-2 p-2"
+                value={valueKommentar}
+                onChange={(e) => setValueKommentar(e.target.value)}
               />
               <button
-                onClick={() => {
-                  const neuerKommentar = `${
-                    user?.name || "Anonym"
-                  } kommentiert: ${kommentarWerte[blogEintrag.id]}`;
-                  if (!kommentarWerte[blogEintrag.id]) return;
-
-                  setAntwort((prevAntwort) =>
-                    prevAntwort.map((eintrag) =>
-                      eintrag.id === blogEintrag.id
-                        ? {
-                            ...eintrag,
-                            kommentarAntwort: [
-                              ...eintrag.kommentarAntwort,
-                              neuerKommentar,
-                            ],
-                          }
-                        : eintrag
-                    )
-                  );
-
-                  setKommentarWerte((prev) => ({
-                    ...prev,
-                    [blogEintrag.id]: "",
-                  }));
-                  setAktivesKommentarFeld(null);
-                }}
+                data-refid={eintrag.id}
+                onClick={handleCommentSubmit}
                 className="mt-2 text-xs rounded-lg bg-slate-500 text-white p-2 cursor-pointer"
               >
                 Kommentar senden

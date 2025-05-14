@@ -1,4 +1,4 @@
-import { NavLink, useLocation, useNavigate } from "react-router-dom";
+import { NavLink, Link, useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import Modal from "../Modal/Modal";
 import { FaTrashAlt } from "react-icons/fa";
@@ -41,12 +41,11 @@ function NavBar() {
     setNotifications(newNotifications);
   };
 
-
-  const handleSearch = async (e)=>{
+  const handleSearch = async (e) => {
     try {
-      if(e.key != "Enter") return;
-      if(!searchValue) return;
-      let requestObject = {searchString:searchValue, type:null};
+      if (e.key != "Enter") return;
+      if (!searchValue) return;
+      let requestObject = { searchString: searchValue, type: null };
       const response = await fetch(
         `${import.meta.env.VITE_API_URL}/forum/search`,
         {
@@ -63,11 +62,10 @@ function NavBar() {
       console.log(res);
       setSearchModalOpen(true);
       setSearchResults([...res]);
-
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
+  };
 
   const stripHtml = (html) => {
     const tmp = document.createElement("div");
@@ -85,6 +83,7 @@ function NavBar() {
         alt="logo"
         className="w-1/7"
       />
+
       {!isOnSignupLogin && (
         <>
           <label className="input mt-5">
@@ -104,36 +103,45 @@ function NavBar() {
                 <path d="m21 21-4.3-4.3"></path>
               </g>
             </svg>
-            <input type="search" onKeyUp={handleSearch} onChange={(e)=>setSearchValue(e.target.value.trim())} required placeholder="Search" />
+            <input
+              type="search"
+              onKeyUp={handleSearch}
+              onChange={(e) => setSearchValue(e.target.value.trim())}
+              required
+              placeholder="Search"
+            />
           </label>
-          
 
-            <ModalSearch open={searchModalOpen} onClose={() => setSearchModalOpen(false)}>
-              <div className="flex flex-col gap-5">
-                <div className="relative mb-5 border-b-1">
-                  <h3>Suchergebnisse</h3>
-                  <MdClose
-                    className="absolute top-0 right-0 cursor-pointer"
-                    onClick={() => setSearchModalOpen(false)}
-                  />
-                </div>
+          <ModalSearch
+            open={searchModalOpen}
+            onClose={() => setSearchModalOpen(false)}
+          >
+            <div className="flex flex-col gap-5">
+              <div className="relative mb-5 border-b-1">
+                <h3>Suchergebnisse</h3>
+                <MdClose
+                  className="absolute top-0 right-0 cursor-pointer"
+                  onClick={() => setSearchModalOpen(false)}
+                />
+              </div>
 
-                {searchResults.map((s) => (
-                  <NavLink onClick={()=>setSearchModalOpen(false)} to={s.type == "question"? `/detailForum/${s.id}`: `/detailBlog/${s.id}`}>
-                    <div
-                    key={s.id}
-                    className="items-center mb-3"
-                  >
-                    
+              {searchResults.map((s) => (
+                <NavLink
+                  onClick={() => setSearchModalOpen(false)}
+                  to={
+                    s.type == "question"
+                      ? `/detailForum/${s.id}`
+                      : `/detailBlog/${s.id}`
+                  }
+                >
+                  <div key={s.id} className="items-center mb-3">
                     <h3 className="">{s.title}</h3>
                     <p className=" line-clamp-1">{stripHtml(s.content)}</p>
-                    
                   </div>
-                  </NavLink>
-                  
-                ))}
-              </div>
-            </ModalSearch>
+                </NavLink>
+              ))}
+            </div>
+          </ModalSearch>
         </>
       )}
       <div className="flex gap-8 p-4 items-center">
@@ -190,7 +198,6 @@ function NavBar() {
                 ))}
               </div>
             </Modal>
-
           </>
         )}
       </div>

@@ -1,5 +1,5 @@
 import { CiFilter } from "react-icons/ci";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ModalBlog from "../Modal/ModalBlog";
 import ReactQuill, { Quill } from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css";
@@ -11,22 +11,70 @@ function Blogs() {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState("");
   const [titel, setTitel] = useState("");
+  const [isPrivate, setIsPrivate] = useState(false);
   const [selectedTags, setSelectedTags] = useState([]);
   const [customTag, setCustomTag] = useState("");
   const { user } = useAuth();
 
-  const [blogBeitraege, setBlogBeitraege] = useState([
-    {
-      id: 1,
-      title: "Wie Tailwind funktioniert.",
-      text: " The classic Latin passage that just never gets old, enjoy as much (or as little) lorem ipsum as you can handle with our easy to ...",
-      tags: ["Schlagwort", "CSS"],
-      badges: 12,
-      likes: 4,
-      views: 245,
-      time: "2 min.",
-    },
-  ]);
+  const [blogBeitraege, setBlogBeitraege] = useState([]);
+
+  useEffect(() => {
+    console.log(blogBeitraege);
+  }, [blogBeitraege]);
+
+  useEffect(() => {
+    const fetchBlogs = async () => {
+      try {
+        let blogArray = [];
+        const response = await fetch(
+          `${import.meta.env.VITE_API_URL}/blogs?type=blog`,
+          {
+            method: "GET",
+            credentials: "include",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (!response.ok) throw new Error();
+        const res = await response.json();
+        console.log("Daten: " + res.posts);
+        blogArray = res.posts;
+        const beitraege = blogArray.map((e) => ({
+          ...e,
+          time:
+            Math.floor((Date.now() - Date.parse(e.createdAt)) / 1000) > 60
+              ? Math.floor((Date.now() - Date.parse(e.createdAt)) / 1000 / 60) >
+                60
+                ? Math.floor(
+                    (Date.now() - Date.parse(e.createdAt)) / 1000 / 60 / 60
+                  ) > 24
+                  ? `${Math.floor(
+                      (Date.now() - Date.parse(e.createdAt)) /
+                        1000 /
+                        60 /
+                        60 /
+                        24
+                    )} Tag(e)`
+                  : `${Math.floor(
+                      (Date.now() - Date.parse(e.createdAt)) / 1000 / 60 / 60
+                    )} Std.`
+                : `${Math.floor(
+                    (Date.now() - Date.parse(e.createdAt)) / 1000 / 60
+                  )} Min.`
+              : `${Math.floor(
+                  (Date.now() - Date.parse(e.createdAt)) / 1000
+                )} Sek.`,
+        }));
+        //beitraege.sort((a, b) => a.createdAt - b.createdAt);
+        setBlogBeitraege(beitraege);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchBlogs();
+  }, []);
 
   const availableTags = ["CSS", "JS", "React"];
 
@@ -48,28 +96,51 @@ function Blogs() {
     }
   };
 
-  const handleCreateBeitrag = () => {
-    const neuerBeitrag = {
-      id: blogBeitraege.length + 1,
-      title: titel,
-      nutzerName: user?.name,
-      text: value,
-      tags: selectedTags,
-      badges: 20,
-      likes: 0,
-      views: 0,
-      time: "jetzt",
-      answers: 0,
-    };
+  const handleCreateBeitrag = async () => {
+    try {
+      let neuerBeitrag = {
+        title: titel,
+        content: value,
+        type: "blog",
+        userId: user.id,
+        isPrivate,
+        tags: selectedTags,
+      };
 
-    setBlogBeitraege([neuerBeitrag, ...blogBeitraege]);
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/blogs`, {
+        method: "POST",
+        body: JSON.stringify(neuerBeitrag),
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
-    // Modal schließen & Felder zurücksetzen
-    setOpen(false);
-    setTitel("");
-    setValue("");
-    setSelectedTags([]);
-    setCustomTag("");
+      if (!response.ok) throw new Error();
+
+      const res = await response.json();
+      neuerBeitrag = res.createdPost;
+      neuerBeitrag.time =
+        Math.floor((Date.now() - Date.parse(neuerBeitrag.createdAt)) / 1000) >
+        60
+          ? `${Math.floor(
+              (Date.now() - Date.parse(neuerBeitrag.createdAt)) / 1000 / 60
+            )} Min.`
+          : `${Math.floor(
+              (Date.now() - Date.parse(neuerBeitrag.createdAt)) / 1000
+            )} Sek.`;
+      setBlogBeitraege([neuerBeitrag, ...blogBeitraege]);
+
+      // Modal schließen & Felder zurücksetzen
+      setOpen(false);
+      setTitel("");
+      setValue("");
+      setSelectedTags([]);
+      setCustomTag("");
+      setIsPrivate(false);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   // Custom ToolBar
@@ -96,6 +167,10 @@ function Blogs() {
     "image",
     "code-block",
   ];
+
+  const handlePrivateChange = (e) => {
+    setIsPrivate(e.target.checked);
+  };
 
   return (
     <>
@@ -130,7 +205,14 @@ function Blogs() {
             type="text"
             onChange={(e) => setTitel(e.target.value)}
           />
-
+          <div className="flex gap-2">
+            <input
+              type="checkbox"
+              onClick={handlePrivateChange}
+              className="checkbox"
+            />
+            <h3>Privat?</h3>
+          </div>
           <h3>Schlagwörter</h3>
 
           {/* Anzeige der ausgewählten Tags */}
@@ -206,12 +288,13 @@ function Blogs() {
         <BlogKarte
           key={eintrag.id}
           title={eintrag.title}
-          text={eintrag.text}
+          text={eintrag.content}
           tags={eintrag.tags}
-          badges={eintrag.badges}
-          likes={eintrag.likes}
-          views={eintrag.views}
+          likes={eintrag.numberOfLikes}
+          views={eintrag.viewCount}
           time={eintrag.time}
+          badges={0}
+          id={eintrag.id}
         />
       ))}
 

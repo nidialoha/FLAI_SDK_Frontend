@@ -16,7 +16,8 @@ function ForumKarte({ title, text, tags, likes, views, time, answers, id }) {
       <div className="bg-white mt-4 shadow-md p-6 ml-5 rounded-lg">
         <div className="grid grid-cols-5 gap-10">
           <div className="flex flex-col items-center border-r-1">
-            <p className="bg-slate-400 p-6 text-center rounded-full h-14 w-14"></p>
+            <p className="bg-slate-400 text-center rounded-full h-14 w-14"></p>
+
             <div className="flex gap-2 text-right mt-3 items-center">
               <AiOutlineLike />
               <p>{likes}</p>
