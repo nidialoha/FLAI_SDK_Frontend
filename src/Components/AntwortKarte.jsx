@@ -1,7 +1,6 @@
 import { AiOutlineLike } from "react-icons/ai";
 import { AiOutlineDislike } from "react-icons/ai";
 import { TfiControlRecord } from "react-icons/tfi";
-import { useAuth } from "../Context/AuthProvider";
 import KommentarKarte from "./KommentarKarte";
 
 function AntwortKarte({
@@ -15,12 +14,7 @@ function AntwortKarte({
   onReact,
   bild,
 }) {
-  const { isAuthenticated } = useAuth();
-  const stripHtml = (html) => {
-    const tmp = document.createElement("div");
-    tmp.innerHTML = html;
-    return tmp.textContent || tmp.innerText || "";
-  };
+ 
   return (
     <>
       {/* Kommentare Section */}
@@ -28,13 +22,13 @@ function AntwortKarte({
       <div>
         <div className="flex justify-between">
           <div className="flex gap-6 pb-5 pt-5 ">
-            {isAuthenticated && (
+            
               <img
                 src={bild}
                 alt={nutzerNameKommentar}
                 className="rounded-full ml-5 w-14 h-14"
               />
-            )}
+            
             <div>
               <h6 className="font-bold text-sm">{nutzerNameKommentar}</h6>
 
