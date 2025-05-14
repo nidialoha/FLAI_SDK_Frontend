@@ -6,6 +6,7 @@ import { AiOutlineLike } from "react-icons/ai";
 import { TfiControlRecord } from "react-icons/tfi";
 import rehypeRaw from "rehype-raw";
 import Markdown from "react-markdown";
+import "quill/dist/quill.snow.css";
 
 function DetailBlogKarte({
   title,
@@ -59,7 +60,11 @@ function DetailBlogKarte({
         </div>
 
         <div className="m-5">
-          <Markdown children={text} rehypePlugins={rehypeRaw}></Markdown>
+          {/* <Markdown children={text} rehypePlugins={rehypeRaw}></Markdown> */}
+          <div
+            className="ql-editor"
+            dangerouslySetInnerHTML={{ __html: text }}
+          ></div>
           <div className="flex gap-2 flex-wrap">
             {tags.map((tag, idx) => (
               <p key={idx} className="bg-slate-300 px-3 rounded-lg mt-6">
