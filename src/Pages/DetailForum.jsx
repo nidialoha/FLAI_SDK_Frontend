@@ -14,7 +14,8 @@ function DetailForum() {
   const { user } = useAuth();
   const [generalObject, setGeneralObject] = useState({
     mainPost: { tags: [], comments: [] },
-    answers: [{ comments: [] }],
+    answers: [{ comments: [] }, ],
+    hasAIAnswer:false
   });
   const [readyForAI, setReadyForAI] = useState(false);
   const [valueAntwort, setValueAntwort] = useState("");
@@ -195,6 +196,7 @@ function DetailForum() {
             comments: [...mainPostComments],
           },
           answers: [...generalObject.answers],
+          hasAIAnswer: generalObject.hasAIAnswer
         });
       } else {
         let answersArray = [...generalObject.answers];
@@ -210,6 +212,7 @@ function DetailForum() {
         setGeneralObject({
           mainPost: { ...generalObject.mainPost },
           answers: [...updatedAnswers],
+          hasAIAnswer: generalObject.hasAIAnswer
         });
       }
       setValueKommentar("");
@@ -249,6 +252,7 @@ function DetailForum() {
           ...generalObject.mainPost,
         },
         answers: [...answersArray],
+        hasAIAnswer: generalObject.hasAIAnswer
       });
     } catch (error) {
       console.log(error);
@@ -281,6 +285,7 @@ function DetailForum() {
           ...generalObject.mainPost,
         },
         answers: [...answersArray],
+        hasAIAnswer: true
       });
     } catch (error) {
       console.log(error);
@@ -395,7 +400,7 @@ function DetailForum() {
         </button>
       )} */}
 
-      {readyForAI && generalObject.mainPost.userId == user.id && (
+      {user!==null && readyForAI && generalObject.mainPost.userId == user.id && (
         <button
           onClick={generateAIAnswer}
           data-refid={generalObject.mainPost.id}

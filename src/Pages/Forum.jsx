@@ -12,7 +12,7 @@ function Forum() {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState("");
   const [titel, setTitel] = useState("");
-  const [isPrivate, setIsPrivate] = useState(false);
+  //const [isPrivate, setIsPrivate] = useState(false);
   const [selectedTags, setSelectedTags] = useState([]);
   const [customTag, setCustomTag] = useState("");
   const { user } = useAuth();
@@ -105,10 +105,10 @@ function Forum() {
         content: value,
         type: "question",
         userId: user.id,
-        isPrivate,
+        //isPrivate,
         tags: selectedTags,
       };
-      console.log("Before fetch");
+      
       const response = await fetch(`${import.meta.env.VITE_API_URL}/forum`, {
         method: "POST",
         body: JSON.stringify(neuerBeitrag),
@@ -119,7 +119,7 @@ function Forum() {
       });
 
       if (!response.ok) throw new Error();
-      console.log("After fetch");
+      
       const res = await response.json();
       neuerBeitrag = res.createdPost;
       neuerBeitrag.time =
